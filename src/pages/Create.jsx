@@ -130,7 +130,7 @@ function Create() {
     <div className={classes.create}>
       <Appdrawer />
       <Container className={classes.createContainer}>
-        <Card className={classes.card}>
+        <Card className={classes.card} elevation={10}>
           <CardContent className={classes.cardContent}>
             <img src="/Icons/mic.png" width="50rem" height="50rem" alt="" />
             <Link to="/record">
@@ -144,7 +144,7 @@ function Create() {
             </Link>
           </CardContent>
         </Card>
-        <Card className={classes.card}>
+        <Card className={classes.card} elevation={10}>
           <CardContent className={classes.cardContent}>
             <img src="/Icons/upload.png" width="50rem" height="50rem" alt="" />
             <Link to="/upload">
@@ -158,7 +158,7 @@ function Create() {
             </Link>
           </CardContent>
         </Card>
-        <Card className={classes.card}>
+        <Card className={classes.card} elevation={10}>
           <CardContent className={classes.cardContent}>
             <img src="/Icons/edit.png" width="50rem" height="50rem" alt="" />
             <Link to="/write">

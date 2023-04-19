@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => {
     navItem: {
       fontSize: "1.2rem",
       cursor: "pointer",
+      fontWeight: 600,
     },
   };
 });

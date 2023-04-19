@@ -11,3 +11,12 @@ a {
 html {
   font-size: 62.5%;
 }
+
+.sound-wave {
+  stroke-width: 5000000000000000rem !important; /* increase the stroke width for thicker lines */
+  transition: all 0.2s ease-in-out !important; /* add a transition for smoother updates */
+}
+
+.sound-wave path {
+  fill: none !important; /* remove the fill to show only the lines */
+}
