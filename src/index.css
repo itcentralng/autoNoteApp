@@ -20,3 +20,28 @@ html {
 .sound-wave path {
   fill: none !important; /* remove the fill to show only the lines */
 }
+
+.markdownContainer p {
+  position: relative;
+}
+.markdownContainer img {
+  width: "auto";
+  object-fit: cover;
+  object-position: center;
+  height: 30rem;
+  border-radius: 1rem;
+  margin: 5rem 0rem;
+}
+.markdownContainer h1 {
+  font-size: 5rem;
+  text-decoration: underline;
+}
+.markdownContainer h2 {
+  font-size: 2.5rem;
+  text-decoration: underline;
+  color: #ffa500;
+}
+.markdownContainer p {
+  font-size: 2rem;
+  color: grey;
+}
