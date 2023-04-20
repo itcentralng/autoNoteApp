@@ -7,6 +7,7 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
+import { LocalSeeRounded } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -39,12 +40,12 @@ function Login() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log(location.pathname);
+  // console.log(location.pathname);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   function handleLogin() {
     if (location.pathname === "/teacher") {
-      fetch("https://api.klassnote.itcentral.ng/login", {
+      fetch(`${process.env.REACT_APP_API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,12 +55,13 @@ function Login() {
           password,
         }),
       }).then((res) => {
-        if (res.ok) {
-          console.log("good");
-          navigate("/subject");
-        } else {
-          console.log("bad");
-        }
+        res.json().then((data) => {
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data));
+            navigate("/create");
+          }
+        });
       });
     } else {
       console.log("this is for student ");
