@@ -46,28 +46,18 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // send login request to server
       const response = await fetch('https://api.klassnote.itcentral.ng/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
-      // handle response
       const data = await response.json();
-      if (data.success) {
-        // login successful, navigate to profile page
-        setLoginMessage("Login successful");
-        window.location.href = '/profile';
-      } else {
-        // login failed, display error message
-        console.error('Login failed: Wrong Username or Password');
-        setLoginMessage("Wrong username or password");
-      }
+      console.log('User registered successfully:', data);
     } catch (error) {
-      console.error('Failed to log in:', error);
-      setLoginMessage("Failed to log in. Please try again later.");
+      console.error('Failed to register user:', error);
     }
   };
+
   console.log(location.pathname);
   return (
     <div className={classes.login}>
