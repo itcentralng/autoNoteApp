@@ -60,12 +60,31 @@ function Recording() {
     latencyHint: "interactive",
     blockSize: 512,
   };
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     console.log(file);
     setSelectedFile(file);
-    // do something with the selected file here
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    try {
+      const response = await fetch("https://api.klassnote.itcentral.ng/upload", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const data = await response.json();
+      console.log("file successfully uploaded to server", data);
+    } catch (error) {
+      console.error("There was an error!", error);
+      
+    }
   };
+  
   useEffect(() => {
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);

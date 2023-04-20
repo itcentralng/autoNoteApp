@@ -8,7 +8,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -40,6 +40,8 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginMessage, setLoginMessage] = useState("");
+  const navigate = useNavigate();
+
   
   
 
@@ -49,15 +51,19 @@ function Login() {
       const response = await fetch('https://api.klassnote.itcentral.ng/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email:username, password }),
       });
       const data = await response.json();
-      console.log('User registered successfully:', data);
+      console.log('User logged in successfully:', data);
+      setLoginMessage("Login successful");
+      navigate('/create'); // redirect to /generator
     } catch (error) {
-      console.error('Failed to register user:', error);
+      console.error('Failed to log in user:', error);
+      setLoginMessage("Wrong username or password");
     }
   };
-
+  
+  
   console.log(location.pathname);
   return (
     <div className={classes.login}>
