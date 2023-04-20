@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
-import { Button, Typography, makeStyles } from "@material-ui/core";
+import { Button, TextField, Typography, makeStyles } from "@material-ui/core";
 import { CloudUpload, Create, RecordVoiceOver } from "@material-ui/icons";
 import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
@@ -27,9 +27,34 @@ const useStyles = makeStyles((theme) => {
       fontSize: "1.3rem",
       marginTop: "2rem",
     },
+    write: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "3rem",
+    },
   };
 });
 function Recording() {
+  const formObj = [
+    {
+      label: "Subject",
+    },
+    {
+      label: "Topic",
+    },
+    {
+      label: "Curriculum",
+    },
+    {
+      label: "Level",
+    },
+  ];
   const classes = useStyles();
   const location = useLocation();
   const [record, setRecord] = useState(false);
@@ -144,14 +169,35 @@ function Recording() {
           </label>
         </div>
       ) : location.pathname === "/write" ? (
-        <Button
-          variant="contained"
-          className={classes.btn}
-          color="secondary"
-          startIcon={<RecordVoiceOver />}
-        >
-          Generate Note
-        </Button>
+        <div className={classes.write}>
+          <form className={classes.form}>
+            {formObj.map((form) => {
+              return (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  label={form.label}
+                  InputLabelProps={{
+                    style: {
+                      color: "black",
+                    },
+                  }}
+                  className={classes.input}
+                  color="secondary"
+                />
+              );
+            })}
+          </form>
+
+          <Button
+            variant="contained"
+            className={classes.btn}
+            color="secondary"
+            startIcon={<RecordVoiceOver />}
+          >
+            Generate Note
+          </Button>
+        </div>
       ) : null}
     </div>
   );
