@@ -40,29 +40,33 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginMessage, setLoginMessage] = useState("");
-  const navigate = useNavigate();
-
+  const [authToken, setAuthToken] = useState("");
+  const navigate = useNavigate(); 
   
   
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch('https://api.klassnote.itcentral.ng/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email:username, password }),
+        body: JSON.stringify({ email: username, password }),
       });
       const data = await response.json();
-      console.log('User logged in successfully:', data);
-      setLoginMessage("Login successful");
-      navigate('/create'); // redirect to /generator
+      if (response.status === 200) {
+        localStorage.setItem("authToken", data.token);
+        setAuthToken(data.token);
+        console.log("User token:", data.token);
+        setLoginMessage("Logged in successfully");
+        navigate("/create"); // Navigate to /generate page
+      } else {
+        setLoginMessage("Wrong username or password");
+      }
     } catch (error) {
-      console.error('Failed to log in user:', error);
+      console.error('Failed to register user:', error);
       setLoginMessage("Wrong username or password");
     }
   };
-  
   
   console.log(location.pathname);
   return (

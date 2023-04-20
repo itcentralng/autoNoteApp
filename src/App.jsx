@@ -10,6 +10,7 @@ import Questions from "./pages/Questions";
 import Create from "./pages/Create";
 import Recording from "./pages/Recording";
 import Generator from "./pages/Generator";
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -91,6 +92,7 @@ function App() {
             <Route exact path="/upload" element={<Recording />} />
             <Route exact path="/write" element={<Recording />} />
             <Route exact path="/generator" element={<Generator />} />
+          
           </Routes>
         </Router>
       </div>

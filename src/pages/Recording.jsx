@@ -67,26 +67,40 @@ function Recording() {
     console.log(file);
     setSelectedFile(file);
     console.log("Uploading File....");
-    
+  
+    const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
+    console.log("authToken: ", authToken); // Log the authentication token to the console
+  
     const formData = new FormData();
     formData.append("file", file);
   
     try {
       const response = await fetch("https://api.klassnote.itcentral.ng/note/audio", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "multipart/form-data",
+        },
         body: formData,
       });
   
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+  
       const data = await response.json();
+  
+      if (data.authenticated === false) {
+        throw new Error("User is not authenticated");
+      }
+  
       console.log("file successfully uploaded to server", data);
     } catch (error) {
       console.error("There was an error!", error);
     }
   };
   
+    
   
   useEffect(() => {
     if (selectedFile) {
