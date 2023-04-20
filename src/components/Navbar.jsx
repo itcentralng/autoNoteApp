@@ -60,7 +60,7 @@ function Navbar() {
       <Container className={classes.navbarContainer}>
         <div className={classes.logo}>
           <Link to="/">
-            <Typography variant="h4">ClassNaut</Typography>
+            <Typography variant="h4">KlassNaut</Typography>
           </Link>
         </div>
         <List className={classes.navItems}>
