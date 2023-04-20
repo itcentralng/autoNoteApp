@@ -7,8 +7,8 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
-import React, { useEffect } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -37,7 +37,34 @@ const useStyles = makeStyles((theme) => {
 function Login() {
   const classes = useStyles();
   const location = useLocation();
+  const navigate = useNavigate();
+
   console.log(location.pathname);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  function handleLogin() {
+    if (location.pathname === "/teacher") {
+      fetch("https://api.klassnote.itcentral.ng/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      }).then((res) => {
+        if (res.ok) {
+          console.log("good");
+          navigate("/subject");
+        } else {
+          console.log("bad");
+        }
+      });
+    } else {
+      console.log("this is for student ");
+    }
+  }
   return (
     <div className={classes.login}>
       <Container className={classes.loginContainer}>
@@ -68,6 +95,10 @@ function Login() {
             <TextField
               variant="outlined"
               label="Username"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
               InputLabelProps={{
                 style: {
                   color: "black",
@@ -79,6 +110,10 @@ function Login() {
             <TextField
               variant="outlined"
               label="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               InputLabelProps={{
                 style: {
                   color: "black",
@@ -87,15 +122,16 @@ function Login() {
               className={classes.input}
               color="secondary"
             />
-            <Link to={location.pathname === "/teacher" ? "/subject" : null}>
-              <Button
-                variant="contained"
-                color="secondary"
-                className={classes.btn}
-              >
-                Log in
-              </Button>
-            </Link>
+            {/* <Link to={location.pathname === "/teacher" ? "/subject" : null}> */}
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.btn}
+              onClick={handleLogin}
+            >
+              Log in
+            </Button>
+            {/* </Link> */}
           </CardContent>
         </Card>
       </Container>
