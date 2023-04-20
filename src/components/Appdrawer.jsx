@@ -31,7 +31,7 @@ import {
   SubjectOutlined,
 } from "@material-ui/icons";
 import { useHistory, useLocation } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 
 const drawerWidth = 300;
 const useStyles = makeStyles(function (theme) {
@@ -77,6 +77,17 @@ const useStyles = makeStyles(function (theme) {
 function Appdrawer() {
   let location = useLocation();
   const classes = useStyles();
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/notes`, {
+      headers: {
+        Authorization: "Bearer " + user.token,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data[1].subject));
+  }, []);
   const subjects = [
     {
       subject: "Biology",

@@ -40,6 +40,12 @@ function Login() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/create");
+    }
+  }, []);
+
   // console.log(location.pathname);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
