@@ -31,7 +31,7 @@ import {
   SubjectOutlined,
 } from "@material-ui/icons";
 import { useHistory, useLocation } from "react-router-dom";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const drawerWidth = 300;
 const useStyles = makeStyles(function (theme) {
@@ -41,6 +41,7 @@ const useStyles = makeStyles(function (theme) {
     },
     drawer: {
       width: drawerWidth,
+      overflowX: "hidden",
       [theme.breakpoints.down("sm")]: {
         width: "50%",
       },
@@ -51,6 +52,8 @@ const useStyles = makeStyles(function (theme) {
     paperDrawer: {
       width: drawerWidth,
       backgroundColor: "gray",
+      overflowX: "hidden",
+
       [theme.breakpoints.down("sm")]: {
         width: "50%",
       },
@@ -78,7 +81,8 @@ function Appdrawer() {
   let location = useLocation();
   const classes = useStyles();
   const user = JSON.parse(localStorage.getItem("user"));
-
+  const [subject, setSubject] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/notes`, {
       headers: {
@@ -86,30 +90,24 @@ function Appdrawer() {
       },
     })
       .then((res) => res.json())
-      .then((data) => console.log(data[1].subject));
+      .then((data) => {
+        setSubject(
+          data.map((aData) => {
+            return aData;
+          })
+        );
+      });
   }, []);
-  const subjects = [
-    {
-      subject: "Biology",
-      topic: ["Cell"],
-      Path: "/",
-    },
-    {
-      subject: "Physics",
-      topic: ["Gravitational Pull", "Acceleration"],
-      Path: "/create",
-    },
-    {
-      subject: "Chemistry",
-      topic: ["Chemical Balancing"],
-      Path: "/List",
-    },
-    {
-      subject: "Mathematics",
-      topic: ["Algebra"],
-      Path: "/reminder",
-    },
-  ];
+  const groupedData = subject.reduce((acc, cur) => {
+    const index = acc.findIndex((item) => item.subject === cur.subject);
+    if (index !== -1) {
+      acc[index].topics.push(cur.topic);
+    } else {
+      acc.push({ subject: cur.subject, topics: [cur.topic] });
+    }
+    return acc;
+  }, []);
+
   return (
     <div className={classes.create}>
       <Drawer
@@ -122,7 +120,7 @@ function Appdrawer() {
           ClassNaut
         </Typography>
         <List>
-          {subjects.map(function (subject) {
+          {groupedData.map(function (subject) {
             return (
               <Accordion>
                 <AccordionSummary
@@ -141,13 +139,13 @@ function Appdrawer() {
                   }}
                 >
                   <List>
-                    {subject.topic.map((aTopic) => {
+                    {subject.topics.map((topic) => {
                       return (
-                        <ListItem className={classes.topic}>{aTopic}</ListItem>
+                        <ListItem className={classes.topic}>{topic}</ListItem>
                       );
                     })}
 
-                    <TextField
+                    {/* <TextField
                       label="Add a new topic"
                       color="secondary"
                       style={{
@@ -170,7 +168,7 @@ function Appdrawer() {
                           fontSize: "1.4rem",
                         },
                       }}
-                    />
+                    /> */}
                   </List>
                 </AccordionDetails>
               </Accordion>

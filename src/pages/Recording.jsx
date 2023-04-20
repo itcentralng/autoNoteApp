@@ -220,7 +220,7 @@ function Recording() {
                   variant="outlined"
                   // value={}
                   onChange={(e) => {
-                    if (form.label === "subject") {
+                    if (form.label === "Subject") {
                       setSubject(e.target.value);
                     } else if (form.label === "Topic") {
                       setTopic(e.target.value);
