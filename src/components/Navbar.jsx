@@ -46,6 +46,10 @@ function Navbar() {
       Link: "/contact",
     },
     {
+      title: "Register",
+      Link: "/register",
+    },
+    {
       title: "Log in",
       Link: "/login",
     },
