@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
 import { Button, Typography, makeStyles } from "@material-ui/core";
-import { CloudUpload, RecordVoiceOver } from "@material-ui/icons";
-import { useLocation } from "react-router-dom";
+import { CloudUpload, Create, RecordVoiceOver } from "@material-ui/icons";
+import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
 
@@ -101,6 +101,16 @@ function Recording() {
               <audio src={recordedBlob.blobURL} controls />
             </div>
           )}{" "}
+          <Link to="/generate">
+            <Button
+              className={classes.btn}
+              color="secondary"
+              variant="contained"
+              startIcon={<Create />}
+            >
+              Generate
+            </Button>
+          </Link>
         </div>
       ) : location.pathname === "/upload" ? (
         <div className={classes.recorder}>
@@ -115,8 +125,8 @@ function Recording() {
             </div>
           )}{" "}
           <input
-            accept="audio/*" // add the accept attribute to specify the types of files that can be selected
-            style={{ display: "none" }} // hide the input element
+            accept="audio/*"
+            style={{ display: "none" }}
             id="file-input"
             type="file"
             onChange={handleFileChange}
