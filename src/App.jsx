@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Hero from "./pages/Hero";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Question from "./pages/Questions";
 import Questions from "./pages/Questions";
 import Create from "./pages/Create";
@@ -67,6 +68,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route exact path="/" element={<Hero />} />
+            <Route exact path="/register" element={<Register />} />
             <Route exact path="/teacher" element={<Login />} />
             <Route exact path="/student" element={<Login />} />
             <Route

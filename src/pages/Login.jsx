@@ -7,7 +7,7 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
@@ -37,6 +37,37 @@ const useStyles = makeStyles((theme) => {
 function Login() {
   const classes = useStyles();
   const location = useLocation();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginMessage, setLoginMessage] = useState("");
+  
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // send login request to server
+      const response = await fetch('https://api.klassnote.itcentral.ng/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      // handle response
+      const data = await response.json();
+      if (data.success) {
+        // login successful, navigate to profile page
+        setLoginMessage("Login successful");
+        window.location.href = '/profile';
+      } else {
+        // login failed, display error message
+        console.error('Login failed: Wrong Username or Password');
+        setLoginMessage("Wrong username or password");
+      }
+    } catch (error) {
+      console.error('Failed to log in:', error);
+      setLoginMessage("Failed to log in. Please try again later.");
+    }
+  };
   console.log(location.pathname);
   return (
     <div className={classes.login}>
@@ -65,9 +96,12 @@ function Login() {
             <Typography variant="h3">
               {location.pathname == "/teacher" ? "Teacher" : "Student"}
             </Typography>
+            <form onSubmit={handleSubmit}>
             <TextField
               variant="outlined"
               label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               InputLabelProps={{
                 style: {
                   color: "black",
@@ -78,6 +112,8 @@ function Login() {
             />
             <TextField
               variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               label="Password"
               InputLabelProps={{
                 style: {
@@ -87,15 +123,17 @@ function Login() {
               className={classes.input}
               color="secondary"
             />
-            <Link to={location.pathname === "/teacher" ? "/subject" : null}>
+            
               <Button
                 variant="contained"
+                type="submit"
                 color="secondary"
                 className={classes.btn}
               >
                 Log in
               </Button>
-            </Link>
+              {loginMessage && <div style={{ color: "red", fontSize:14 }}>{loginMessage}</div>}
+            </form>
           </CardContent>
         </Card>
       </Container>
