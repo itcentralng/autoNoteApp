@@ -7,8 +7,8 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
-import React, { useEffect } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -37,6 +37,37 @@ const useStyles = makeStyles((theme) => {
 function Login() {
   const classes = useStyles();
   const location = useLocation();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginMessage, setLoginMessage] = useState("");
+  const [authToken, setAuthToken] = useState("");
+  const navigate = useNavigate(); 
+  
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('https://api.klassnote.itcentral.ng/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: username, password }),
+      });
+      const data = await response.json();
+      if (response.status === 200) {
+        localStorage.setItem("authToken", data.token);
+        setAuthToken(data.token);
+        console.log("User token:", data.token);
+        setLoginMessage("Logged in successfully");
+        navigate("/create"); // Navigate to /generate page
+      } else {
+        setLoginMessage("Wrong username or password");
+      }
+    } catch (error) {
+      console.error('Failed to register user:', error);
+      setLoginMessage("Wrong username or password");
+    }
+  };
+  
   console.log(location.pathname);
   return (
     <div className={classes.login}>
@@ -65,9 +96,12 @@ function Login() {
             <Typography variant="h3">
               {location.pathname == "/teacher" ? "Teacher" : "Student"}
             </Typography>
+            <form onSubmit={handleSubmit}>
             <TextField
               variant="outlined"
               label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               InputLabelProps={{
                 style: {
                   color: "black",
@@ -78,6 +112,8 @@ function Login() {
             />
             <TextField
               variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               label="Password"
               InputLabelProps={{
                 style: {
@@ -87,15 +123,17 @@ function Login() {
               className={classes.input}
               color="secondary"
             />
-            <Link to={location.pathname === "/teacher" ? "/subject" : null}>
+            
               <Button
                 variant="contained"
+                type="submit"
                 color="secondary"
                 className={classes.btn}
               >
                 Log in
               </Button>
-            </Link>
+              {loginMessage && <div style={{ color: "red", fontSize:14 }}>{loginMessage}</div>}
+            </form>
           </CardContent>
         </Card>
       </Container>

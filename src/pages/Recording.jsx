@@ -35,6 +35,8 @@ function Recording() {
   const [record, setRecord] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadResponse, setUploadResponse] = useState(null);
 
   const startRecording = () => {
     setRecord(true);
@@ -60,12 +62,46 @@ function Recording() {
     latencyHint: "interactive",
     blockSize: 512,
   };
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     console.log(file);
     setSelectedFile(file);
-    // do something with the selected file here
+    console.log("Uploading File....");
+  
+    const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
+    console.log("authToken: ", authToken); // Log the authentication token to the console
+  
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    try {
+      const response = await fetch("https://api.klassnote.itcentral.ng/note/audio", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const data = await response.json();
+  
+      if (data.authenticated === false) {
+        throw new Error("User is not authenticated");
+      }
+  
+      console.log("file successfully uploaded to server", data);
+    } catch (error) {
+      console.error("There was an error!", error);
+    }
   };
+  
+    
+  
   useEffect(() => {
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
