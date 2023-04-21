@@ -4,6 +4,7 @@ import Appdrawer from "../components/Appdrawer";
 import { Container, makeStyles } from "@material-ui/core";
 import html2pdf from "html2pdf.js";
 import { useParams } from "react-router";
+// import e from "express";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -58,6 +59,7 @@ function Generator() {
   const { id } = useParams();
   const [appDrawer, setAppDrawer] = useState(true);
   const [content, setContent] = useState("");
+  // const [cleanContent, setCleanContent] = useState(content.clean);
 
   useEffect(() => {
     let formatted = data.clean;
@@ -73,13 +75,8 @@ function Generator() {
     setContent(
       JSON.parse(localStorage.getItem("subject")).find((item) => item.id == id)
     );
+    console.log(content);
   }, [id]);
-  //   useEffect(() => {
-  //     fetch("https://www.markdownguide.org/api/v1/basic-syntax.json")
-  //       .then((res) => res.json)
-  //       .then((data) => console.log(data));
-  //   }, []);
-  //   console.log(markdown);
 
   const handleDownload = () => {
     setAppDrawer(false);
@@ -94,11 +91,24 @@ function Generator() {
     };
     html2pdf().from(input).set(options).save();
   };
-
   return (
     <div className={classes.generator} ref={pdfRef}>
       {appDrawer && <Appdrawer />}
-      <Container className="markdownContainer">
+      <Container
+        className="markdownContainer"
+        contentEditable={true}
+        onInput={(e) => {
+          setContent((prevState) => {
+            return {
+              ...prevState,
+              clean: (prevState.clean += e.target.innerText),
+            };
+          });
+        }}
+        onClick={() => {
+          console.log(content.clean);
+        }}
+      >
         <ReactMarkdown>{content.clean}</ReactMarkdown>
         <button onClick={handleDownload}>Download PDF</button>
       </Container>
