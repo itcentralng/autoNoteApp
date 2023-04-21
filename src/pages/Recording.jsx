@@ -6,6 +6,8 @@ import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
 import axios from 'axios';
+import io from "socket.io-client";
+import Generator from './Generator';
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -52,9 +54,62 @@ function Recording() {
   const [curriculum, setCurriculum] = useState("");
   const [level, setLevel] = useState("");
   const [notes, setNotes] = useState([]);
+  
 
   const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
   console.log("authToken: ", authToken); // Log the authentication token to the console
+
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const socket = io("https://socket.klassnaut.itcentral.ng/", {
+      transports: ["polling"],
+      auth: {
+        token: authToken,
+      }
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to Socket.IO server");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO server");
+    });
+
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
+    });
+
+    socket.on("error", (error) => {
+      console.log("Failed to connect to Socket.IO server:", error);
+    });
+
+    console.log(messages); // log the messages array
+    return () => {
+      socket.disconnect();
+    };
+  }, [authToken, messages]);
+
+
+  
+
+  useEffect(() => {
+    axios
+      .get("https://api.klassnote.itcentral.ng/notes", {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("Notes received from server: ", response.data);
+        setNotes(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [authToken]);
 
 
   const handleGenerateNote = async () => {
@@ -100,6 +155,8 @@ function Recording() {
 
     fetchNotes();
   }, [authToken]);
+
+
 
   const formObj = [
     {
@@ -219,6 +276,11 @@ function Recording() {
         </div>
       ) : location.pathname === "/write" ? (
         <div className={classes.write}>
+           <ul>
+              {messages.map((message, index) => (
+                <li style={{ color: "black" }} key={index}>{message}</li>
+              ))}
+            </ul>
           <form className={classes.form}>
             {formObj.map((form) => {
               return (
