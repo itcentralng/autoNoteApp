@@ -63,7 +63,7 @@ function Login() {
         setLoginMessage("Wrong username or password");
       }
     } catch (error) {
-      console.error('Failed to register user:', error);
+      console.error('Failed to login user:', error);
       setLoginMessage("Wrong username or password");
     }
   };
