@@ -5,6 +5,7 @@ import { CloudUpload, RecordVoiceOver } from "@material-ui/icons";
 import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -50,19 +51,72 @@ function Recording() {
   const [topic, setTopic] = useState("");
   const [curriculum, setCurriculum] = useState("");
   const [level, setLevel] = useState("");
+  const [notes, setNotes] = useState([]);
+
+  const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
+  console.log("authToken: ", authToken); // Log the authentication token to the console
+
+
+  const handleGenerateNote = async () => {
+    try {
+      const response = await axios.post(
+        "https://api.klassnote.itcentral.ng/note",
+        {
+          subject,
+          topic,
+          level,
+          curriculum,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.klassnote.itcentral.ng/notes",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        console.log(response.data);
+        setNotes(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchNotes();
+  }, [authToken]);
 
   const formObj = [
     {
       label: "Subject",
+      value: subject,
     },
     {
       label: "Topic",
+      value: topic,
     },
     {
       label: "Curriculum",
+      value: curriculum,
     },
     {
       label: "Level",
+      value: level,
     },
   ];
 
@@ -171,6 +225,7 @@ function Recording() {
                 <TextField
                   fullWidth
                   variant="outlined"
+                  value={form.value}
                   // value={}
                   onChange={(e) => {
                     if (form.label === "Subject") {
@@ -200,6 +255,7 @@ function Recording() {
             variant="contained"
             className={classes.btn}
             color="secondary"
+            onClick={handleGenerateNote}
             startIcon={<RecordVoiceOver />}
           >
             Generate Note
