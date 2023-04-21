@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
-import { Button, Typography, makeStyles } from "@material-ui/core";
+import { Button, Typography, makeStyles,TextField } from "@material-ui/core";
 import { CloudUpload, RecordVoiceOver } from "@material-ui/icons";
 import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
@@ -27,6 +27,17 @@ const useStyles = makeStyles((theme) => {
       fontSize: "1.3rem",
       marginTop: "2rem",
     },
+    write: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "3rem",
+    },
   };
 });
 function Recording() {
@@ -35,6 +46,25 @@ function Recording() {
   const [record, setRecord] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [subject, setSubject] = useState("");
+  const [topic, setTopic] = useState("");
+  const [curriculum, setCurriculum] = useState("");
+  const [level, setLevel] = useState("");
+
+  const formObj = [
+    {
+      label: "Subject",
+    },
+    {
+      label: "Topic",
+    },
+    {
+      label: "Curriculum",
+    },
+    {
+      label: "Level",
+    },
+  ];
 
   const startRecording = () => {
     setRecord(true);
@@ -134,7 +164,38 @@ function Recording() {
           </label>
         </div>
       ) : location.pathname === "/write" ? (
-        <Link to="/generator">
+        <div className={classes.write}>
+          <form className={classes.form}>
+            {formObj.map((form) => {
+              return (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  // value={}
+                  onChange={(e) => {
+                    if (form.label === "Subject") {
+                      setSubject(e.target.value);
+                    } else if (form.label === "Topic") {
+                      setTopic(e.target.value);
+                    } else if (form.label === "Curriculum") {
+                      setCurriculum(e.target.value);
+                    } else if (form.label === "Level") {
+                      setLevel(e.target.value);
+                    }
+                  }}
+                  label={form.label}
+                  InputLabelProps={{
+                    style: {
+                      color: "black",
+                    },
+                  }}
+                  className={classes.input}
+                  color="secondary"
+                />
+              );
+            })}
+          </form>
+
           <Button
             variant="contained"
             className={classes.btn}
@@ -143,7 +204,7 @@ function Recording() {
           >
             Generate Note
           </Button>
-        </Link>
+        </div>
       ) : null}
     </div>
   );
