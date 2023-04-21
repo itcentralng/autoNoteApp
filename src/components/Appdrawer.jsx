@@ -44,6 +44,9 @@ const useStyles = makeStyles(function (theme) {
       [theme.breakpoints.down("sm")]: {
         width: "50%",
       },
+      "@media print": {
+        display: "none",
+      },
     },
     paperDrawer: {
       width: drawerWidth,

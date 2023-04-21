@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
 import { Button, Typography, makeStyles } from "@material-ui/core";
 import { CloudUpload, RecordVoiceOver } from "@material-ui/icons";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
 
@@ -134,14 +134,16 @@ function Recording() {
           </label>
         </div>
       ) : location.pathname === "/write" ? (
-        <Button
-          variant="contained"
-          className={classes.btn}
-          color="secondary"
-          startIcon={<RecordVoiceOver />}
-        >
-          Generate Note
-        </Button>
+        <Link to="/generator">
+          <Button
+            variant="contained"
+            className={classes.btn}
+            color="secondary"
+            startIcon={<RecordVoiceOver />}
+          >
+            Generate Note
+          </Button>
+        </Link>
       ) : null}
     </div>
   );
