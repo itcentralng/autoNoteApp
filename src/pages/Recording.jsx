@@ -54,6 +54,7 @@ function Recording() {
   const [curriculum, setCurriculum] = useState("");
   const [level, setLevel] = useState("");
   const [notes, setNotes] = useState([]);
+  const [generatedNote, setGeneratedNote] = useState({})
   
 
   const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
@@ -79,7 +80,9 @@ function Recording() {
     });
 
     socket.on("note", (note) => {
+      setGeneratedNote(note.note)
       console.log(note)
+      console.log(generatedNote)
       alert("note has been generated, please check")
       // setMessages((note) => [...messages, note]);
     });
