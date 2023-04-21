@@ -30,7 +30,7 @@ import {
   SearchOutlined,
   SubjectOutlined,
 } from "@material-ui/icons";
-import { useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
 const drawerWidth = 300;
@@ -78,6 +78,7 @@ const useStyles = makeStyles(function (theme) {
   };
 });
 function Appdrawer() {
+  const navigate = useNavigate();
   let location = useLocation();
   const classes = useStyles();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -91,22 +92,29 @@ function Appdrawer() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setSubject(
-          data.map((aData) => {
-            return aData;
-          })
-        );
+        setSubject(data);
+        localStorage.setItem("subject", JSON.stringify(data));
       });
   }, []);
-  const groupedData = subject.reduce((acc, cur) => {
-    const index = acc.findIndex((item) => item.subject === cur.subject);
-    if (index !== -1) {
-      acc[index].topics.push(cur.topic);
-    } else {
-      acc.push({ subject: cur.subject, topics: [cur.topic] });
-    }
-    return acc;
-  }, []);
+  const groupedData = subject.reduce(
+    (acc, cur) => {
+      const index = acc.findIndex((item) => item.subject === cur.subject);
+      if (index !== -1) {
+        acc[index].topics.push({
+          id: cur.id,
+          topic: cur.topic,
+          clean: cur.clean,
+        });
+      } else {
+        acc.push({
+          subject: cur.subject,
+          topics: [{ id: cur.id, topic: cur.topic, clean: cur.clean }],
+        });
+      }
+      return acc;
+    },
+    [subject]
+  );
 
   return (
     <div className={classes.create}>
@@ -120,7 +128,7 @@ function Appdrawer() {
           ClassNaut
         </Typography>
         <List>
-          {groupedData.map(function (subject) {
+          {groupedData?.map(function (subject) {
             return (
               <Accordion>
                 <AccordionSummary
@@ -139,36 +147,21 @@ function Appdrawer() {
                   }}
                 >
                   <List>
-                    {subject.topics.map((topic) => {
+                    {subject?.topics?.map((topic) => {
                       return (
-                        <ListItem className={classes.topic}>{topic}</ListItem>
+                        <ListItem
+                          className={classes.topic}
+                          onClick={() => {
+                            console.log("clicked");
+                            // window.location.reload();
+                            // localStorage.setItem("topicId", topic.id);
+                            navigate(`/generator/${topic.id}`);
+                          }}
+                        >
+                          {topic.topic}
+                        </ListItem>
                       );
                     })}
-
-                    {/* <TextField
-                      label="Add a new topic"
-                      color="secondary"
-                      style={{
-                        padding: "1rem",
-                      }}
-                      //   fullWidth
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton>
-                              <AddCircleOutlineOutlined color="danger" />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          color: "black",
-                          padding: "1rem",
-                          fontSize: "1.4rem",
-                        },
-                      }}
-                    /> */}
                   </List>
                 </AccordionDetails>
               </Accordion>
