@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
-import { Button, Typography, makeStyles } from "@material-ui/core";
+import { Button, TextField, Typography, makeStyles } from "@material-ui/core";
 import { CloudUpload, RecordVoiceOver } from "@material-ui/icons";
 import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -37,6 +38,56 @@ function Recording() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [uploadResponse, setUploadResponse] = useState(null);
+  const [subject, setSubject] = useState("");
+  const [topic, setTopic] = useState("");
+  const [level, setLevel] = useState("");
+  const [curriculum, setCurriculum] = useState("");
+  const [notes, setNotes] = useState([]);
+
+  const authToken = localStorage.getItem("authToken");
+
+  const handleGenerateNote = async () => {
+    try {
+      const response = await axios.post(
+        "https://api.klassnote.itcentral.ng/note",
+        {
+          subject,
+          topic,
+          level,
+          curriculum,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const response = await axios.get("https://api.klassnote.itcentral.ng/notes", {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(response.data);
+        setNotes(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchNotes();
+  }, [authToken]);
+
 
   const startRecording = () => {
     setRecord(true);
@@ -170,9 +221,66 @@ function Recording() {
           </label>
         </div>
       ) : location.pathname === "/write" ? (
+
+        <div>
+          <TextField
+              variant="outlined"
+              label="Subject"
+              value={subject}
+              onChange={(event) => setSubject(event.target.value)}
+              InputLabelProps={{
+                style: {
+                  color: "black", marginBottom: '16px'
+                },
+              }}
+              className={classes.input}
+              color="secondary"
+            />
+            <TextField
+              variant="outlined"
+              label="Topic"
+              value={topic}
+              onChange={(event) => setTopic(event.target.value)}
+              InputLabelProps={{
+                style: {
+                  color: "black", marginBottom: '16px'
+                },
+              }}
+              className={classes.input}
+              color="secondary"
+            />
+            <TextField
+              variant="outlined"
+              label="Level"
+              value={level}
+              onChange={(event) => setLevel(event.target.value)}
+              InputLabelProps={{
+                style: {
+                  color: "black", marginBottom: '16px'
+                },
+              }}
+              className={classes.input}
+              color="secondary"
+            />
+            <TextField
+              variant="outlined"
+              label="Curriculum"
+              value={curriculum}
+              onChange={(event) => setCurriculum(event.target.value)}
+              InputLabelProps={{
+                style: {
+                  color: "black", marginBottom: '16px'
+                },
+              }}
+              className={classes.input}
+              color="secondary"
+            />
+
+
         <Link to="/generator">
           <Button
             variant="contained"
+            onClick={handleGenerateNote}
             className={classes.btn}
             color="secondary"
             startIcon={<RecordVoiceOver />}
@@ -180,6 +288,24 @@ function Recording() {
             Generate Note
           </Button>
         </Link>
+        {notes.map((note) => (
+      <div key={note.id}>
+        <h2>{note.subject}</h2>
+        <h3>{note.topic}</h3>
+        <h3>{note.level}</h3>
+        <h3>{note.curriculum}</h3>
+        <p>{note.topic}</p>
+        <ul>
+          {note.images.map((image) => (
+            <li key={image.id}>
+              <img height="20px" width="20px" src={image.url} alt={image.prompt} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+        
+        </div>
       ) : null}
     </div>
   );

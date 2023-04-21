@@ -6,6 +6,8 @@ import {
   TextField,
   Typography,
   makeStyles,
+  FormControl,
+  FormGroup
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
@@ -27,10 +29,11 @@ const useStyles = makeStyles((theme) => {
       width: "fit-content",
       padding: "1rem 3rem",
       fontSize: "1.3rem",
-      marginTop: "2rem",
+      marginTop: "1rem",
     },
     input: {
       color: "red",
+      marginBottom: "16px",
     },
   };
 });
@@ -97,6 +100,8 @@ function Login() {
               {location.pathname == "/teacher" ? "Teacher" : "Student"}
             </Typography>
             <form onSubmit={handleSubmit}>
+            <FormControl>
+            <FormGroup>
             <TextField
               variant="outlined"
               label="Username"
@@ -104,12 +109,13 @@ function Login() {
               onChange={(e) => setUsername(e.target.value)}
               InputLabelProps={{
                 style: {
-                  color: "black",
+                  color: "black", marginBottom: '16px'
                 },
               }}
               className={classes.input}
               color="secondary"
             />
+
             <TextField
               variant="outlined"
               value={password}
@@ -133,6 +139,8 @@ function Login() {
                 Log in
               </Button>
               {loginMessage && <div style={{ color: "red", fontSize:14 }}>{loginMessage}</div>}
+              </FormGroup>
+            </FormControl>
             </form>
           </CardContent>
         </Card>
