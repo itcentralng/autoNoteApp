@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
-import { Button, TextField, Typography, makeStyles } from "@material-ui/core";
-import { CloudUpload, Create, RecordVoiceOver } from "@material-ui/icons";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button, Typography, makeStyles,TextField } from "@material-ui/core";
+import { CloudUpload, RecordVoiceOver } from "@material-ui/icons";
+import { Link, useLocation } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
-import { io } from "socket.io-client";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -42,6 +41,16 @@ const useStyles = makeStyles((theme) => {
   };
 });
 function Recording() {
+  const classes = useStyles();
+  const location = useLocation();
+  const [record, setRecord] = useState(false);
+  const [recordedBlob, setRecordedBlob] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [subject, setSubject] = useState("");
+  const [topic, setTopic] = useState("");
+  const [curriculum, setCurriculum] = useState("");
+  const [level, setLevel] = useState("");
+
   const formObj = [
     {
       label: "Subject",
@@ -56,52 +65,6 @@ function Recording() {
       label: "Level",
     },
   ];
-  const classes = useStyles();
-  const location = useLocation();
-  const [record, setRecord] = useState(false);
-  const [recordedBlob, setRecordedBlob] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [subject, setSubject] = useState("");
-  const [topic, setTopic] = useState("");
-  const [curriculum, setCurriculum] = useState("");
-  const [level, setLevel] = useState("");
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  function handleGeneration() {
-    fetch(`${process.env.REACT_APP_API_URL}/note`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + user.token,
-      },
-      body: JSON.stringify({
-        subject,
-        level,
-        curriculum,
-        topic,
-      }),
-    }).then((res) => {
-      res.json().then((data) => {
-        if (data.status == "success") {
-          console.log(data.message);
-        }
-      });
-    });
-  }
-
-  const socket = io(process.env.REACT_APP_SOCKET_URL);
-  console.log(process.env.REACT_APP_SOCKET_URL);
-
-  socket.on("connect", (data) => {
-    socket.emit("join", `${user.id}`);
-    console.log(data);
-    console.log("hi");
-  });
-
-  socket.on("note", (data) => {
-    console.log(data);
-  });
 
   const startRecording = () => {
     setRecord(true);
@@ -168,16 +131,6 @@ function Recording() {
               <audio src={recordedBlob.blobURL} controls />
             </div>
           )}{" "}
-          <Link to="/generate">
-            <Button
-              className={classes.btn}
-              color="secondary"
-              variant="contained"
-              startIcon={<Create />}
-            >
-              Generate
-            </Button>
-          </Link>
         </div>
       ) : location.pathname === "/upload" ? (
         <div className={classes.recorder}>
@@ -192,8 +145,8 @@ function Recording() {
             </div>
           )}{" "}
           <input
-            accept="audio/*"
-            style={{ display: "none" }}
+            accept="audio/*" // add the accept attribute to specify the types of files that can be selected
+            style={{ display: "none" }} // hide the input element
             id="file-input"
             type="file"
             onChange={handleFileChange}
@@ -248,7 +201,6 @@ function Recording() {
             className={classes.btn}
             color="secondary"
             startIcon={<RecordVoiceOver />}
-            onClick={handleGeneration}
           >
             Generate Note
           </Button>
