@@ -92,7 +92,6 @@ function App() {
             <Route exact path="/upload" element={<Recording />} />
             <Route exact path="/write" element={<Recording />} />
             <Route exact path="/generator" element={<Generator />} />
-          
           </Routes>
         </Router>
       </div>

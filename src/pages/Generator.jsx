@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import Appdrawer from "../components/Appdrawer";
 import { Container, makeStyles } from "@material-ui/core";
+import html2pdf from "html2pdf.js";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -14,28 +15,46 @@ const useStyles = makeStyles((theme) => {
 function Generator() {
   const data = {
     clean:
-      "# Deforestation in Nigeria\n\nDeforestation is the act of clearing a forest, specifically, cutting down trees for farming, urbanization, or commercial purposes. Nigeria, like many countries in Africa, is experiencing the impacts of deforestation. The country's rapidly growing population has pushed agriculture and land development, leading to the clearing of large areas of forest land.\n\n## Causes of Deforestation\n\nThe following are some of the causes of deforestation in Nigeria:\n\n- Agriculture: Agriculture is one of the leading causes of deforestation in Nigeria. As the population grows, there is increased demand for food. This has led to the expansion of agricultural lands, which requires clearing of forests.\n\n- Logging: Logging for the production of timber is another significant cause of deforestation in Nigeria. The demand for wood for construction and furniture has led to the depletion of forest reserves.\n\n- Urbanization: Nigeria's rapidly growing cities have put pressure on forested lands. The need for urban infrastructure and the expansion of cities have led to the clearing of forests.\n\n## Impacts of Deforestation\n\nDeforestation has had several impacts on Nigeria, including:\n\n- Climate change: Deforestation contributes to climate change, which has had adverse effects on Nigeria. The country has experienced more frequent droughts, flooding, and desertification.\n\n- Loss of biodiversity: Nigeria's forests are home to a variety of plant and animal species. Deforestation has led to the loss of habitats and the extinction of some species.\n\n- Soil erosion: Trees help to hold the soil in place, prevent erosion, and regulate water cycle. Deforestation has led to soil erosion, which has affected the fertility of the soil and agricultural production.\n\n## Solutions to Deforestation\n\nThe following are some of the solutions to deforestation in Nigeria:\n\n- Afforestation: Afforestation involves planting new trees in areas that have been cleared. This will help to restore the forest cover and mitigate the effects of deforestation.\n\n- Conservation: The conservation of forest reserves and parks will help to protect the forests in Nigeria. The government should enact laws to protect these areas from logging and other destructive activities.\n\n- Sustainable agriculture: The promotion of sustainable agriculture practices such as crop rotation and agroforestry will help to reduce the need for the expansion of agricultural lands.\n\n![img:18](https://cdn.pixabay.com/photo/2017/09/13/02/52/forest-2749380_960_720.jpg)\n\nIn conclusion, deforestation in Nigeria is a significant problem that requires urgent attention. The government, private sector, and individuals should work together to combat this problem and preserve Nigeria's natural resources for future generations.",
-    created_at: "2023-04-20T12:07:53.142354",
+      "# Cells\n\nCells are the basic unit of life. Living organisms are made up of one or more cells. Cells carry out various functions that enable the growth, development, and survival of living things. \n\nThere are two main types of cells: prokaryotic and eukaryotic cells.\n\n## Prokaryotic Cells\n\nProkaryotic cells are small and lack a nucleus. They are found in organisms such as bacteria and archaea. Prokaryotic cells contain DNA, ribosomes, cell membranes, and cytoplasm. However, they do not contain membrane-bound organelles, such as mitochondria or chloroplasts.\n\n[img:15]\n\n## Eukaryotic Cells\n\nEukaryotic cells are larger and have a nucleus containing DNA. They are found in protists, fungi, plants, and animals. Eukaryotic cells have membrane-bound organelles such as mitochondria, chloroplasts (in plant cells), the Golgi apparatus, the endoplasmic reticulum, and lysosomes. Eukaryotic cells are more complex in structure and function compared to prokaryotic cells.\n\n[img:16]\n\n## Cell Membrane\n\nCell membrane is the outermost part of the cell. It protects the cell from the external environment and regulates the movement of substances in and out of the cell. The cell membrane is a selectively permeable membrane, meaning it allows only certain molecules to enter and exit the cell.\n\n[img:17]\n\nUnderstanding cells is essential to understanding life processes.",
+    created_at: "2023-04-20T11:40:46.816459",
     creator_id: 1,
     curriculum: "Nigeria",
-    id: 4,
+    id: 3,
     images: [
       {
-        created_at: "2023-04-20T12:08:27.464257",
-        id: 18,
-        prompt: "a dense forest with tall trees and greenery",
-        updated_at: "2023-04-20T12:08:27.464257",
-        url: "https://dhfspace.fra1.digitaloceanspaces.com/dhfspace/yla1pc6su5.png",
+        created_at: "2023-04-20T11:41:09.389638",
+        id: 15,
+        prompt: "a micrograph of prokaryotic cells, magnified x100",
+        updated_at: "2023-04-20T11:41:09.389638",
+        url: "https://dhfspace.fra1.digitaloceanspaces.com/dhfspace/d1m9ta9h0h.png",
+      },
+      {
+        created_at: "2023-04-20T11:41:15.522510",
+        id: 16,
+        prompt: "an illustration of a eukaryotic cell, labeled with its parts",
+        updated_at: "2023-04-20T11:41:15.522510",
+        url: "https://dhfspace.fra1.digitaloceanspaces.com/dhfspace/z3f6rs99ek.png",
+      },
+      {
+        created_at: "2023-04-20T11:41:21.430720",
+        id: 17,
+        prompt:
+          "an image of a cell membrane, showing its components and function",
+        updated_at: "2023-04-20T11:41:21.430720",
+        url: "https://dhfspace.fra1.digitaloceanspaces.com/dhfspace/ma2uowaize.png",
       },
     ],
     level: "SS2",
-    raw: "# Deforestation in Nigeria\n\nDeforestation is the act of clearing a forest, specifically, cutting down trees for farming, urbanization, or commercial purposes. Nigeria, like many countries in Africa, is experiencing the impacts of deforestation. The country's rapidly growing population has pushed agriculture and land development, leading to the clearing of large areas of forest land.\n\n## Causes of Deforestation\n\nThe following are some of the causes of deforestation in Nigeria:\n\n- Agriculture: Agriculture is one of the leading causes of deforestation in Nigeria. As the population grows, there is increased demand for food. This has led to the expansion of agricultural lands, which requires clearing of forests.\n\n- Logging: Logging for the production of timber is another significant cause of deforestation in Nigeria. The demand for wood for construction and furniture has led to the depletion of forest reserves.\n\n- Urbanization: Nigeria's rapidly growing cities have put pressure on forested lands. The need for urban infrastructure and the expansion of cities have led to the clearing of forests.\n\n## Impacts of Deforestation\n\nDeforestation has had several impacts on Nigeria, including:\n\n- Climate change: Deforestation contributes to climate change, which has had adverse effects on Nigeria. The country has experienced more frequent droughts, flooding, and desertification.\n\n- Loss of biodiversity: Nigeria's forests are home to a variety of plant and animal species. Deforestation has led to the loss of habitats and the extinction of some species.\n\n- Soil erosion: Trees help to hold the soil in place, prevent erosion, and regulate water cycle. Deforestation has led to soil erosion, which has affected the fertility of the soil and agricultural production.\n\n## Solutions to Deforestation\n\nThe following are some of the solutions to deforestation in Nigeria:\n\n- Afforestation: Afforestation involves planting new trees in areas that have been cleared. This will help to restore the forest cover and mitigate the effects of deforestation.\n\n- Conservation: The conservation of forest reserves and parks will help to protect the forests in Nigeria. The government should enact laws to protect these areas from logging and other destructive activities.\n\n- Sustainable agriculture: The promotion of sustainable agriculture practices such as crop rotation and agroforestry will help to reduce the need for the expansion of agricultural lands.\n\n![image: a dense forest with tall trees and greenery](https://cdn.pixabay.com/photo/2017/09/13/02/52/forest-2749380_960_720.jpg)\n\nIn conclusion, deforestation in Nigeria is a significant problem that requires urgent attention. The government, private sector, and individuals should work together to combat this problem and preserve Nigeria's natural resources for future generations.",
-    subject: "Agriculture",
-    topic: "Deforestation",
-    updated_at: "2023-04-20T12:08:33.686086",
+    raw: "# Cells\n\nCells are the basic unit of life. Living organisms are made up of one or more cells. Cells carry out various functions that enable the growth, development, and survival of living things. \n\nThere are two main types of cells: prokaryotic and eukaryotic cells.\n\n## Prokaryotic Cells\n\nProkaryotic cells are small and lack a nucleus. They are found in organisms such as bacteria and archaea. Prokaryotic cells contain DNA, ribosomes, cell membranes, and cytoplasm. However, they do not contain membrane-bound organelles, such as mitochondria or chloroplasts.\n\n[image: a micrograph of prokaryotic cells, magnified x100]\n\n## Eukaryotic Cells\n\nEukaryotic cells are larger and have a nucleus containing DNA. They are found in protists, fungi, plants, and animals. Eukaryotic cells have membrane-bound organelles such as mitochondria, chloroplasts (in plant cells), the Golgi apparatus, the endoplasmic reticulum, and lysosomes. Eukaryotic cells are more complex in structure and function compared to prokaryotic cells.\n\n[image: an illustration of a eukaryotic cell, labeled with its parts]\n\n## Cell Membrane\n\nCell membrane is the outermost part of the cell. It protects the cell from the external environment and regulates the movement of substances in and out of the cell. The cell membrane is a selectively permeable membrane, meaning it allows only certain molecules to enter and exit the cell.\n\n[image: an image of a cell membrane, showing its components and function]\n\nUnderstanding cells is essential to understanding life processes.",
+    subject: "Biology",
+    topic: "Cells",
+    updated_at: "2023-04-20T11:41:27.154617",
   };
+
   const classes = useStyles();
+  const pdfRef = React.useRef();
   const [markdown, setMarkdown] = useState(data.clean);
+  const [appDrawer, setAppDrawer] = useState(true);
 
   useEffect(() => {
     let formatted = data.clean;
@@ -54,11 +73,26 @@ function Generator() {
   //   }, []);
   //   console.log(markdown);
 
+  const handleDownload = () => {
+    setAppDrawer(false);
+    const input = pdfRef.current;
+    const options = {
+      margin: 1,
+      width: 8.5,
+      filename: "my_document.pdf",
+      image: { type: "png", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+    };
+    html2pdf().from(input).set(options).save();
+  };
+
   return (
-    <div className={classes.generator}>
-      <Appdrawer />
+    <div className={classes.generator} ref={pdfRef}>
+      {appDrawer && <Appdrawer />}
       <Container className="markdownContainer">
         <ReactMarkdown>{markdown}</ReactMarkdown>
+        <button onClick={handleDownload}>Download PDF</button>
       </Container>
     </div>
   );
