@@ -71,14 +71,17 @@ function Recording() {
 
     socket.on("connect", () => {
       console.log("Connected to Socket.IO server");
+      socket.emit("join", {user_id:1})
     });
 
     socket.on("disconnect", () => {
       console.log("Disconnected from Socket.IO server");
     });
 
-    socket.on("message", (message) => {
-      setMessages((messages) => [...messages, message]);
+    socket.on("note", (note) => {
+      console.log(note)
+      alert("note has been generated, please check")
+      // setMessages((note) => [...messages, note]);
     });
 
     socket.on("error", (error) => {
