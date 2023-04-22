@@ -37,7 +37,7 @@ import {
   function Register() {
     const classes = useStyles();
     const location = useLocation();
-    const [username, setUsername] = useState('');
+    const [email, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [RegisterMessage, setRegisterMessage] = useState("");
   
@@ -47,7 +47,7 @@ import {
         const response = await fetch('https://api.klassnote.itcentral.ng/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ email, password }),
         });
         const data = await response.json();
         setRegisterMessage("User registered successfully");
@@ -84,8 +84,8 @@ import {
               <form onSubmit={handleSubmit}>
               <TextField
                 variant="outlined"
-                label="Username"
-                value={username}
+                label="Email"
+                value={email}
                 onChange={(e) => setUsername(e.target.value)}
                 InputLabelProps={{
                   style: {
