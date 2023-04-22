@@ -45,9 +45,7 @@ function Login() {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
 
-
   const [wrongCredential, setWrongCredentials] = useState(false);
-
 
   // console.log(location.pathname);
   const [email, setEmail] = useState("");
@@ -151,7 +149,11 @@ function Login() {
                     className={classes.btn}
                     onClick={handleLogin}
                   >
-                    {loader ? <ScaleLoader color="#ffffff" /> : "Log in"}
+                    {loader ? (
+                      <ScaleLoader color="#ffffff" height={15} />
+                    ) : (
+                      "Log in"
+                    )}
                   </Button>
                   {/* </Link> */}
                 </FormGroup>
