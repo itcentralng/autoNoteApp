@@ -59,25 +59,29 @@ function Generator() {
   const { id } = useParams();
   const [appDrawer, setAppDrawer] = useState(true);
   const [content, setContent] = useState("");
-  // const [cleanContent, setCleanContent] = useState(content.clean);
+  const [markdownText, setMarkdownText] = useState("");
 
-  useEffect(() => {
-    let formatted = data.clean;
-    data.images.map((image) => {
-      formatted = formatted.replace(
-        `[img:${image.id}]`,
-        `![${image.prompt}](${image.url})`
-      );
-      setMarkdown(formatted);
-    });
-  }, []);
   useEffect(() => {
     setContent(
       JSON.parse(localStorage.getItem("subject")).find((item) => item.id == id)
     );
+    setMarkdownText(content.clean);
     console.log(content);
+    console.log(markdownText);
   }, [id]);
 
+  useEffect(() => {
+    let formatted = content.clean;
+    console.log(content.images);
+    content?.images?.map((image) => {
+      formatted = formatted.replace(
+        `[img:${image.id}]`,
+        `![${image.prompt}](${image.url})`
+      );
+      setMarkdownText(formatted);
+    });
+  }, [content]);
+  console.log(markdownText);
   const handleDownload = () => {
     setAppDrawer(false);
     const input = pdfRef.current;
@@ -94,22 +98,8 @@ function Generator() {
   return (
     <div className={classes.generator} ref={pdfRef}>
       {appDrawer && <Appdrawer />}
-      <Container
-        className="markdownContainer"
-        contentEditable={true}
-        onInput={(e) => {
-          setContent((prevState) => {
-            return {
-              ...prevState,
-              clean: (prevState.clean += e.target.innerText),
-            };
-          });
-        }}
-        onClick={() => {
-          console.log(content.clean);
-        }}
-      >
-        <ReactMarkdown>{content.clean}</ReactMarkdown>
+      <Container className="markdownContainer">
+        <ReactMarkdown>{markdownText}</ReactMarkdown>
         <button onClick={handleDownload}>Download PDF</button>
       </Container>
     </div>

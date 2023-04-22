@@ -66,6 +66,7 @@ function Recording() {
   const [curriculum, setCurriculum] = useState("");
   const [level, setLevel] = useState("");
   const navigate = useNavigate();
+  const [generatedNote, setGeneratedNote] = useState({});
   const user = JSON.parse(localStorage.getItem("user"));
 
   function handleGeneration() {
@@ -90,18 +91,50 @@ function Recording() {
     });
   }
 
-  const socket = io(process.env.REACT_APP_SOCKET_URL);
-  console.log(process.env.REACT_APP_SOCKET_URL);
+  const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
+  console.log("authToken: ", authToken); // Log the authentication token to the console
 
-  socket.on("connect", (data) => {
-    socket.emit("join", `${user.id}`);
-    console.log(data);
-    console.log("hi");
-  });
+  const [messages, setMessages] = useState([]);
 
-  socket.on("note", (data) => {
-    console.log(data);
-  });
+  useEffect(() => {
+    const socket = io("https://socket.klassnaut.itcentral.ng/", {
+      transports: ["polling"],
+      auth: {
+        token: authToken,
+      },
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to Socket.IO server");
+      socket.emit("join", { user_id: 1 });
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO server");
+    });
+
+    socket.on("note", (note) => {
+      setGeneratedNote(note.note);
+      localStorage.setItem("generated", generatedNote);
+      console.log(JSON.stringify(localStorage.getItem("generated")));
+      console.log(note);
+      const id = console.log(generatedNote.id);
+      alert("note has been generated, please check");
+
+      // const topicID = localStorage.getItem("id");
+      // console.log(topicID);
+      navigate("/generator/" + generatedNote.id);
+    });
+
+    socket.on("error", (error) => {
+      console.log("Failed to connect to Socket.IO server:", error);
+    });
+
+    console.log(messages); // log the messages array
+    return () => {
+      socket.disconnect();
+    };
+  }, [authToken, messages]);
 
   const startRecording = () => {
     setRecord(true);
