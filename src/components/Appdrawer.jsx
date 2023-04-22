@@ -184,7 +184,7 @@ function Appdrawer() {
                     backgroundColor: "whitesmoke",
                   }}
                 >
-                  <List>
+                  <List style={{ width: "100%" }}>
                     {subject?.topics?.map((topic) => {
                       return (
                         <div style={{ display: "flex" }}>
@@ -205,7 +205,7 @@ function Appdrawer() {
                               handleDelete(topic.id);
                             }}
                           >
-                            <DeleteForever />
+                            <DeleteForever style={{ color: "red" }} />
                           </IconButton>
                         </div>
                       );
