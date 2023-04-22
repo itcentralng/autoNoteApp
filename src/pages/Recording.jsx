@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
 import { Button, TextField, Typography, makeStyles } from "@material-ui/core";
+
 import {
   CloudUpload,
   Create,
@@ -14,6 +15,7 @@ import { ReactMic } from "react-mic";
 import { useState } from "react";
 import { io } from "socket.io-client";
 import { ScaleLoader } from "react-spinners";
+
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -70,6 +72,7 @@ function Recording() {
   const [record, setRecord] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [curriculum, setCurriculum] = useState("");
@@ -287,6 +290,7 @@ function Recording() {
           </label>
         </div>
       ) : location.pathname === "/write" ? (
+
         <div className={classes.write}>
           {loader ? (
             <ScaleLoader />
@@ -344,6 +348,7 @@ function Recording() {
               Generate Note
             </Button>
           )}
+
         </div>
       ) : null}
     </div>
