@@ -6,6 +6,8 @@ import {
   TextField,
   Typography,
   makeStyles,
+  FormControl,
+  FormGroup
 } from "@material-ui/core";
 import { LocalSeeRounded } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
@@ -28,10 +30,11 @@ const useStyles = makeStyles((theme) => {
       width: "fit-content",
       padding: "1rem 3rem",
       fontSize: "1.3rem",
-      marginTop: "2rem",
+      marginTop: "1rem",
     },
     input: {
       color: "red",
+      marginBottom: "16px",
     },
   };
 });
@@ -96,6 +99,9 @@ function Login() {
             <Typography variant="h3">
               {location.pathname == "/teacher" ? "Teacher" : "Student"}
             </Typography>
+            <form onSubmit={handleLogin}>
+            <FormControl>
+            <FormGroup>
             <TextField
               variant="outlined"
               label="Username"
@@ -105,19 +111,18 @@ function Login() {
               }}
               InputLabelProps={{
                 style: {
-                  color: "black",
+                  color: "black", marginBottom: '16px'
                 },
               }}
               className={classes.input}
               color="secondary"
             />
+
             <TextField
               variant="outlined"
-              label="Password"
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
+              label="Password"
               InputLabelProps={{
                 style: {
                   color: "black",
@@ -141,6 +146,10 @@ function Login() {
               Log in
             </Button>
             {/* </Link> */}
+            </FormGroup>
+            </FormControl>
+            </form>
+
           </CardContent>
         </Card>
       </Container>
