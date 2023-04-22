@@ -25,6 +25,7 @@ import {
   AddCircleOutlineSharp,
   CheckBox,
   CreateRounded,
+  DeleteForever,
   NotificationsNone,
   NotificationsNoneOutlined,
   SearchOutlined,
@@ -84,6 +85,7 @@ function Appdrawer() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [subject, setSubject] = useState([]);
   const [filteredSubjects, setFilteredSubjects] = useState([]);
+  const [groupedData, setGroupedData] = useState([]);
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/notes`, {
       headers: {
@@ -96,26 +98,40 @@ function Appdrawer() {
         localStorage.setItem("subject", JSON.stringify(data));
       });
   }, []);
-  const groupedData = subject.reduce(
-    (acc, cur) => {
-      const index = acc.findIndex((item) => item.subject === cur.subject);
-      if (index !== -1) {
-        acc[index].topics.push({
-          id: cur.id,
-          topic: cur.topic,
-          clean: cur.clean,
-        });
-      } else {
-        acc.push({
-          subject: cur.subject,
-          topics: [{ id: cur.id, topic: cur.topic, clean: cur.clean }],
-        });
-      }
-      return acc;
-    },
-    [subject]
-  );
+  useEffect(() => {
+    setGroupedData(
+      subject.reduce(
+        (acc, cur) => {
+          const index = acc.findIndex((item) => item.subject === cur.subject);
+          if (index !== -1) {
+            acc[index].topics.push({
+              id: cur.id,
+              topic: cur.topic,
+              clean: cur.clean,
+            });
+          } else {
+            acc.push({
+              subject: cur.subject,
+              topics: [{ id: cur.id, topic: cur.topic, clean: cur.clean }],
+            });
+          }
+          return acc;
+        },
+        [subject]
+      )
+    );
+  }, [subject]);
 
+  function handleDelete(id) {
+    fetch(`${process.env.REACT_APP_API_URL}/note/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + user.token,
+      },
+    }).then(() => {
+      setSubject(subject.filter((aSubject) => subject.id != id));
+    });
+  }
   return (
     <div className={classes.create}>
       <Drawer
@@ -159,6 +175,13 @@ function Appdrawer() {
                           }}
                         >
                           {topic.topic}
+                          <IconButton
+                            onClick={() => {
+                              handleDelete(topic.id);
+                            }}
+                          >
+                            <DeleteForever />
+                          </IconButton>
                         </ListItem>
                       );
                     })}

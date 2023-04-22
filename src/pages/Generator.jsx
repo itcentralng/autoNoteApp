@@ -74,7 +74,7 @@ function Generator() {
     let formatted = content.clean;
     console.log(content.images);
     content?.images?.map((image) => {
-      formatted = formatted.replace(
+      formatted = formatted?.replace(
         `[img:${image.id}]`,
         `![${image.prompt}](${image.url})`
       );

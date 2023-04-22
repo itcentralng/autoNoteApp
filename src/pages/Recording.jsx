@@ -115,15 +115,14 @@ function Recording() {
 
     socket.on("note", (note) => {
       setGeneratedNote(note.note);
-      localStorage.setItem("generated", generatedNote);
-      console.log(JSON.stringify(localStorage.getItem("generated")));
-      console.log(note);
-      const id = console.log(generatedNote.id);
+      let subjectStorage = JSON.parse(localStorage.getItem("subject"));
+      console.log(subjectStorage);
+      subjectStorage.push(note.note);
+      localStorage.setItem("subject", JSON.stringify(subjectStorage));
+      // console.log(note.id);
+      // const id = console.log(generatedNote.id);
       alert("note has been generated, please check");
-
-      // const topicID = localStorage.getItem("id");
-      // console.log(topicID);
-      navigate("/generator/" + generatedNote.id);
+      navigate("/generator/" + note.note.id);
     });
 
     socket.on("error", (error) => {
