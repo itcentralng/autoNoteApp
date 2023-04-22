@@ -1,11 +1,19 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
 import { Button, TextField, Typography, makeStyles } from "@material-ui/core";
-import { CloudUpload, Create, RecordVoiceOver } from "@material-ui/icons";
+import {
+  CloudUpload,
+  Create,
+  CreateRounded,
+  Edit,
+  EditRounded,
+  RecordVoiceOver,
+} from "@material-ui/icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
 import { io } from "socket.io-client";
+import { ScaleLoader } from "react-spinners";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -58,6 +66,7 @@ function Recording() {
   ];
   const classes = useStyles();
   const location = useLocation();
+  const [loader, setLoader] = useState(false);
   const [record, setRecord] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -86,6 +95,7 @@ function Recording() {
       res.json().then((data) => {
         if (data.status == "success") {
           console.log(data.message);
+          setLoader(true);
         }
       });
     });
@@ -121,7 +131,7 @@ function Recording() {
       localStorage.setItem("subject", JSON.stringify(subjectStorage));
       // console.log(note.id);
       // const id = console.log(generatedNote.id);
-      alert("note has been generated, please check");
+      setLoader(false);
       navigate("/generator/" + note.note.id);
     });
 
@@ -244,46 +254,62 @@ function Recording() {
         </div>
       ) : location.pathname === "/write" ? (
         <div className={classes.write}>
-          <form className={classes.form}>
-            {formObj.map((form) => {
-              return (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  // value={}
-                  onChange={(e) => {
-                    if (form.label === "Subject") {
-                      setSubject(e.target.value);
-                    } else if (form.label === "Topic") {
-                      setTopic(e.target.value);
-                    } else if (form.label === "Curriculum") {
-                      setCurriculum(e.target.value);
-                    } else if (form.label === "Level") {
-                      setLevel(e.target.value);
-                    }
-                  }}
-                  label={form.label}
-                  InputLabelProps={{
-                    style: {
-                      color: "black",
-                    },
-                  }}
-                  className={classes.input}
-                  color="secondary"
-                />
-              );
-            })}
-          </form>
-
-          <Button
-            variant="contained"
-            className={classes.btn}
-            color="secondary"
-            startIcon={<RecordVoiceOver />}
-            onClick={handleGeneration}
-          >
-            Generate Note
-          </Button>
+          {loader ? (
+            <ScaleLoader />
+          ) : (
+            <form className={classes.form}>
+              {formObj.map((form) => {
+                return (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    // value={}
+                    onChange={(e) => {
+                      if (form.label === "Subject") {
+                        setSubject(e.target.value);
+                      } else if (form.label === "Topic") {
+                        setTopic(e.target.value);
+                      } else if (form.label === "Curriculum") {
+                        setCurriculum(e.target.value);
+                      } else if (form.label === "Level") {
+                        setLevel(e.target.value);
+                      }
+                    }}
+                    label={form.label}
+                    InputLabelProps={{
+                      style: {
+                        color: "black",
+                      },
+                    }}
+                    className={classes.input}
+                    color="secondary"
+                  />
+                );
+              })}
+            </form>
+          )}
+          {loader ? (
+            <Button
+              variant="contained"
+              className={classes.btn}
+              color="secondary"
+              startIcon={<EditRounded />}
+              onClick={handleGeneration}
+              disabled
+            >
+              Generating Note ...
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              className={classes.btn}
+              color="secondary"
+              startIcon={<EditRounded />}
+              onClick={handleGeneration}
+            >
+              Generate Note
+            </Button>
+          )}
         </div>
       ) : null}
     </div>

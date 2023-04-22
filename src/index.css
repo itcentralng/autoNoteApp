@@ -25,10 +25,10 @@ html {
   position: relative;
 }
 .markdownContainer img {
-  width: "auto";
+  width: 100% !important;
   object-fit: cover;
   object-position: center;
-  height: 30rem;
+  height: "auto";
   border-radius: 1rem;
   margin: 5rem 0rem;
 }

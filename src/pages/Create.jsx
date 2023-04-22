@@ -65,7 +65,7 @@ const useStyles = makeStyles(function (theme) {
       fontWeight: 400,
       padding: "1.5rem",
       borderBottom: "1px solid black",
-      width: "100vw",
+      width: "a",
     },
     createContainer: {
       height: "80vh",
