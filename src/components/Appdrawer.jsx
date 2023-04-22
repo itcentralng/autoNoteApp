@@ -184,7 +184,7 @@ function Appdrawer() {
                     backgroundColor: "whitesmoke",
                   }}
                 >
-                  <List>
+                  <List style={{ width: "100%" }}>
                     {subject?.topics?.map((topic) => {
                       return (
                         <div style={{ display: "flex" }}>
