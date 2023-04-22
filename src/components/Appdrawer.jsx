@@ -74,7 +74,12 @@ const useStyles = makeStyles(function (theme) {
       fontWeight: 400,
       padding: "1.5rem",
       borderBottom: "1px solid black",
-      width: "100vw",
+      width: "auto",
+    },
+    btn: {
+      width: "fit-content",
+      padding: "1rem 3rem",
+      fontSize: "1.3rem",
     },
   };
 });
@@ -140,9 +145,26 @@ function Appdrawer() {
         anchor="left"
         classes={{ paper: classes.paperDrawer }}
       >
-        <Typography variant="h4" className={classes.title}>
-          ClassNaut
-        </Typography>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography variant="h4" className={classes.title}>
+            ClassNaut
+          </Typography>
+          <Link to="/create">
+            <Button
+              className={classes.btn}
+              variant="contained"
+              color="secondary"
+            >
+              CREATE NOTE
+            </Button>
+          </Link>
+        </div>
         <List>
           {groupedData?.map(function (subject) {
             return (
