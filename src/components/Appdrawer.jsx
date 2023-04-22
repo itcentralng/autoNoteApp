@@ -74,7 +74,7 @@ const useStyles = makeStyles(function (theme) {
       fontWeight: 400,
       padding: "1.5rem",
       borderBottom: "1px solid black",
-      width: "auto",
+      width: "100%",
     },
     btn: {
       width: "fit-content",
@@ -133,9 +133,9 @@ function Appdrawer() {
       headers: {
         Authorization: "Bearer " + user.token,
       },
-    }).then(() => {
-      setSubject(subject.filter((aSubject) => subject.id != id));
     });
+    let newList = subject.filter((aSubject) => aSubject.id != id);
+    setSubject(newList);
   }
   return (
     <div className={classes.create}>
@@ -165,7 +165,7 @@ function Appdrawer() {
             </Button>
           </Link>
         </div>
-        <List>
+        <List style={{ width: "100%" }}>
           {groupedData?.map(function (subject) {
             return (
               <Accordion>
@@ -187,16 +187,19 @@ function Appdrawer() {
                   <List>
                     {subject?.topics?.map((topic) => {
                       return (
-                        <ListItem
-                          className={classes.topic}
-                          onClick={() => {
-                            console.log("clicked");
-                            // window.location.reload();
-                            // localStorage.setItem("topicId", topic.id);
-                            navigate(`/generator/${topic.id}`);
-                          }}
-                        >
-                          {topic.topic}
+                        <div style={{ display: "flex" }}>
+                          <ListItem
+                            fullWidth
+                            className={classes.topic}
+                            onClick={() => {
+                              console.log("clicked");
+                              // window.location.reload();
+                              // localStorage.setItem("topicId", topic.id);
+                              navigate(`/generator/${topic.id}`);
+                            }}
+                          >
+                            {topic.topic}
+                          </ListItem>
                           <IconButton
                             onClick={() => {
                               handleDelete(topic.id);
@@ -204,7 +207,7 @@ function Appdrawer() {
                           >
                             <DeleteForever />
                           </IconButton>
-                        </ListItem>
+                        </div>
                       );
                     })}
                   </List>
