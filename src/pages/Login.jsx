@@ -7,11 +7,12 @@ import {
   Typography,
   makeStyles,
   FormControl,
-  FormGroup
+  FormGroup,
 } from "@material-ui/core";
 import { LocalSeeRounded } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { ScaleLoader } from "react-spinners";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -42,6 +43,7 @@ function Login() {
   const classes = useStyles();
   const location = useLocation();
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(false);
 
   const [wrongCredential, setWrongCredentials] = useState(false);
 
@@ -49,6 +51,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   function handleLogin() {
+    setLoader(true);
     fetch(`${process.env.REACT_APP_API_URL}/login`, {
       method: "POST",
       headers: {
@@ -65,7 +68,9 @@ function Login() {
           localStorage.setItem("user", JSON.stringify(data));
           navigate("/create");
           setWrongCredentials(false);
+          setLoader(false);
         } else {
+          setLoader(false);
           setWrongCredentials(true);
         }
       });
@@ -100,56 +105,56 @@ function Login() {
               {location.pathname == "/teacher" ? "Teacher" : "Student"}
             </Typography>
             <form onSubmit={handleLogin}>
-            <FormControl>
-            <FormGroup>
-            <TextField
-              variant="outlined"
-              label="Username"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              InputLabelProps={{
-                style: {
-                  color: "black", marginBottom: '16px'
-                },
-              }}
-              className={classes.input}
-              color="secondary"
-            />
+              <FormControl>
+                <FormGroup style={{ alignItems: "center" }}>
+                  <TextField
+                    variant="outlined"
+                    label="Username"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                    }}
+                    InputLabelProps={{
+                      style: {
+                        color: "black",
+                        marginBottom: "16px",
+                      },
+                    }}
+                    className={classes.input}
+                    color="secondary"
+                  />
 
-            <TextField
-              variant="outlined"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              label="Password"
-              InputLabelProps={{
-                style: {
-                  color: "black",
-                },
-              }}
-              className={classes.input}
-              color="secondary"
-            />
-            {wrongCredential ? (
-              <Typography variant="h6" style={{ color: "red" }}>
-                Wrong Credentials. Please try again
-              </Typography>
-            ) : null}
-            {/* <Link to={location.pathname === "/teacher" ? "/subject" : null}> */}
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.btn}
-              onClick={handleLogin}
-            >
-              Log in
-            </Button>
-            {/* </Link> */}
-            </FormGroup>
-            </FormControl>
+                  <TextField
+                    variant="outlined"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    label="Password"
+                    InputLabelProps={{
+                      style: {
+                        color: "black",
+                      },
+                    }}
+                    className={classes.input}
+                    color="secondary"
+                  />
+                  {wrongCredential ? (
+                    <Typography variant="h6" style={{ color: "red" }}>
+                      Wrong Credentials. Please try again
+                    </Typography>
+                  ) : null}
+                  {/* <Link to={location.pathname === "/teacher" ? "/subject" : null}> */}
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classes.btn}
+                    onClick={handleLogin}
+                  >
+                    {loader ? <ScaleLoader color="#ffffff" /> : "Log in"}
+                  </Button>
+                  {/* </Link> */}
+                </FormGroup>
+              </FormControl>
             </form>
-
           </CardContent>
         </Card>
       </Container>
