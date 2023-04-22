@@ -205,7 +205,7 @@ function Appdrawer() {
                               handleDelete(topic.id);
                             }}
                           >
-                            <DeleteForever />
+                            <DeleteForever style={{ color: "red" }} />
                           </IconButton>
                         </div>
                       );
