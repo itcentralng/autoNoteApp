@@ -137,10 +137,6 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               label="Password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
               InputLabelProps={{
                 style: {
                   color: "black",
@@ -159,6 +155,9 @@ function Login() {
               Log in
             </Button>
             {/* </Link> */}
+            </FormGroup>
+            </FormControl>
+            </form>
 
           </CardContent>
         </Card>
