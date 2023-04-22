@@ -9,8 +9,9 @@ import {
   FormControl,
   FormGroup
 } from "@material-ui/core";
+import { LocalSeeRounded } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -40,38 +41,51 @@ const useStyles = makeStyles((theme) => {
 function Login() {
   const classes = useStyles();
   const location = useLocation();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginMessage, setLoginMessage] = useState("");
-  const [authToken, setAuthToken] = useState("");
-  const navigate = useNavigate(); 
-  
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('https://api.klassnote.itcentral.ng/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: username, password }),
-      });
-      const data = await response.json();
-      if (response.status === 200) {
-        localStorage.setItem("authToken", data.token);
-        setAuthToken(data.token);
-        console.log("User token:", data.token);
-        setLoginMessage("Logged in successfully");
-        navigate("/create"); // Navigate to /generate page
-      } else {
-        setLoginMessage("Wrong username or password");
-      }
-    } catch (error) {
-      console.error('Failed to login user:', error);
-      setLoginMessage("Wrong username or password");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/create");
     }
-  };
-  
-  console.log(location.pathname);
+  }, []);
+
+  // console.log(location.pathname);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  function handleLogin() {
+    fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    }).then((res) => {
+      res.json().then((data) => {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data));
+          navigate("/create");
+        }
+      });
+    });
+  }
+  function checkTokenExpiration() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const { exp } = JSON.parse(atob(token.split(".")[1])); // parse the expiration time from the token payload
+      if (Date.now() >= exp * 1000) {
+        // token has expired, redirect to login page
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
+    }
+  }
+
+  checkTokenExpiration();
   return (
     <div className={classes.login}>
       <Container className={classes.loginContainer}>
@@ -105,8 +119,10 @@ function Login() {
             <TextField
               variant="outlined"
               label="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
               InputLabelProps={{
                 style: {
                   color: "black", marginBottom: '16px'
@@ -121,6 +137,10 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               label="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               InputLabelProps={{
                 style: {
                   color: "black",
@@ -129,19 +149,17 @@ function Login() {
               className={classes.input}
               color="secondary"
             />
-            
-              <Button
-                variant="contained"
-                type="submit"
-                color="secondary"
-                className={classes.btn}
-              >
-                Log in
-              </Button>
-              {loginMessage && <div style={{ color: "red", fontSize:14 }}>{loginMessage}</div>}
-              </FormGroup>
-            </FormControl>
-            </form>
+            {/* <Link to={location.pathname === "/teacher" ? "/subject" : null}> */}
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.btn}
+              onClick={handleLogin}
+            >
+              Log in
+            </Button>
+            {/* </Link> */}
+
           </CardContent>
         </Card>
       </Container>

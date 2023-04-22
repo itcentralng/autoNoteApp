@@ -65,7 +65,7 @@ const useStyles = makeStyles(function (theme) {
       fontWeight: 400,
       padding: "1.5rem",
       borderBottom: "1px solid black",
-      width: "100vw",
+      width: "a",
     },
     createContainer: {
       height: "80vh",
@@ -104,28 +104,6 @@ const useStyles = makeStyles(function (theme) {
 function Create() {
   let location = useLocation();
   const classes = useStyles();
-  const subjects = [
-    {
-      subject: "Biology",
-      topic: ["Cell"],
-      Path: "/",
-    },
-    {
-      subject: "Physics",
-      topic: ["Gravitational Pull", "Acceleration"],
-      Path: "/create",
-    },
-    {
-      subject: "Chemistry",
-      topic: ["Chemical Balancing"],
-      Path: "/List",
-    },
-    {
-      subject: "Mathematics",
-      topic: ["Algebra"],
-      Path: "/reminder",
-    },
-  ];
   return (
     <div className={classes.create}>
       <Appdrawer />

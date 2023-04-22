@@ -1,11 +1,21 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
 import { Button, TextField, Typography, makeStyles } from "@material-ui/core";
-import { CloudUpload, RecordVoiceOver } from "@material-ui/icons";
-import { Link, useLocation } from "react-router-dom";
+
+import {
+  CloudUpload,
+  Create,
+  CreateRounded,
+  Edit,
+  EditRounded,
+  RecordVoiceOver,
+} from "@material-ui/icons";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ReactMic } from "react-mic";
 import { useState } from "react";
-import axios from "axios";
+import { io } from "socket.io-client";
+import { ScaleLoader } from "react-spinners";
+
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -28,66 +38,115 @@ const useStyles = makeStyles((theme) => {
       fontSize: "1.3rem",
       marginTop: "2rem",
     },
+    write: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "3rem",
+    },
   };
 });
 function Recording() {
+  const formObj = [
+    {
+      label: "Subject",
+    },
+    {
+      label: "Topic",
+    },
+    {
+      label: "Curriculum",
+    },
+    {
+      label: "Level",
+    },
+  ];
   const classes = useStyles();
   const location = useLocation();
+  const [loader, setLoader] = useState(false);
   const [record, setRecord] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadingFile, setUploadingFile] = useState(false);
-  const [uploadResponse, setUploadResponse] = useState(null);
+
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
-  const [level, setLevel] = useState("");
   const [curriculum, setCurriculum] = useState("");
-  const [notes, setNotes] = useState([]);
+  const [level, setLevel] = useState("");
+  const navigate = useNavigate();
+  const [generatedNote, setGeneratedNote] = useState({});
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  const authToken = localStorage.getItem("authToken");
-
-  const handleGenerateNote = async () => {
-    try {
-      const response = await axios.post(
-        "https://api.klassnote.itcentral.ng/note",
-        {
-          subject,
-          topic,
-          level,
-          curriculum,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
+  function handleGeneration() {
+    fetch(`${process.env.REACT_APP_API_URL}/note`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + user.token,
+      },
+      body: JSON.stringify({
+        subject,
+        level,
+        curriculum,
+        topic,
+      }),
+    }).then((res) => {
+      res.json().then((data) => {
+        if (data.status == "success") {
+          console.log(data.message);
+          setLoader(true);
         }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      });
+    });
+  }
+
+  const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
+  console.log("authToken: ", authToken); // Log the authentication token to the console
+
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const response = await axios.get("https://api.klassnote.itcentral.ng/notes", {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-        });
-        console.log(response.data);
-        setNotes(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+    const socket = io("https://socket.klassnaut.itcentral.ng/", {
+      transports: ["polling"],
+      auth: {
+        token: authToken,
+      },
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to Socket.IO server");
+      socket.emit("join", { user_id: 1 });
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO server");
+    });
+
+    socket.on("note", (note) => {
+      setGeneratedNote(note.note);
+      let subjectStorage = JSON.parse(localStorage.getItem("subject"));
+      console.log(subjectStorage);
+      subjectStorage.push(note.note);
+      localStorage.setItem("subject", JSON.stringify(subjectStorage));
+      // console.log(note.id);
+      // const id = console.log(generatedNote.id);
+      setLoader(false);
+      navigate("/generator/" + note.note.id);
+    });
+
+    socket.on("error", (error) => {
+      console.log("Failed to connect to Socket.IO server:", error);
+    });
+
+    console.log(messages); // log the messages array
+    return () => {
+      socket.disconnect();
     };
-
-    fetchNotes();
-  }, [authToken]);
-
+  }, [authToken, messages]);
 
   const startRecording = () => {
     setRecord(true);
@@ -188,6 +247,16 @@ function Recording() {
               <audio src={recordedBlob.blobURL} controls />
             </div>
           )}{" "}
+          <Link to="/generate">
+            <Button
+              className={classes.btn}
+              color="secondary"
+              variant="contained"
+              startIcon={<Create />}
+            >
+              Generate
+            </Button>
+          </Link>
         </div>
       ) : location.pathname === "/upload" ? (
         <div className={classes.recorder}>
@@ -202,8 +271,8 @@ function Recording() {
             </div>
           )}{" "}
           <input
-            accept="audio/*" // add the accept attribute to specify the types of files that can be selected
-            style={{ display: "none" }} // hide the input element
+            accept="audio/*"
+            style={{ display: "none" }}
             id="file-input"
             type="file"
             onChange={handleFileChange}
@@ -222,89 +291,64 @@ function Recording() {
         </div>
       ) : location.pathname === "/write" ? (
 
-        <div>
-          <TextField
-              variant="outlined"
-              label="Subject"
-              value={subject}
-              onChange={(event) => setSubject(event.target.value)}
-              InputLabelProps={{
-                style: {
-                  color: "black", marginBottom: '16px'
-                },
-              }}
-              className={classes.input}
+        <div className={classes.write}>
+          {loader ? (
+            <ScaleLoader />
+          ) : (
+            <form className={classes.form}>
+              {formObj.map((form) => {
+                return (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    // value={}
+                    onChange={(e) => {
+                      if (form.label === "Subject") {
+                        setSubject(e.target.value);
+                      } else if (form.label === "Topic") {
+                        setTopic(e.target.value);
+                      } else if (form.label === "Curriculum") {
+                        setCurriculum(e.target.value);
+                      } else if (form.label === "Level") {
+                        setLevel(e.target.value);
+                      }
+                    }}
+                    label={form.label}
+                    InputLabelProps={{
+                      style: {
+                        color: "black",
+                      },
+                    }}
+                    className={classes.input}
+                    color="secondary"
+                  />
+                );
+              })}
+            </form>
+          )}
+          {loader ? (
+            <Button
+              variant="contained"
+              className={classes.btn}
               color="secondary"
-            />
-            <TextField
-              variant="outlined"
-              label="Topic"
-              value={topic}
-              onChange={(event) => setTopic(event.target.value)}
-              InputLabelProps={{
-                style: {
-                  color: "black", marginBottom: '16px'
-                },
-              }}
-              className={classes.input}
+              startIcon={<EditRounded />}
+              onClick={handleGeneration}
+              disabled
+            >
+              Generating Note ...
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              className={classes.btn}
               color="secondary"
-            />
-            <TextField
-              variant="outlined"
-              label="Level"
-              value={level}
-              onChange={(event) => setLevel(event.target.value)}
-              InputLabelProps={{
-                style: {
-                  color: "black", marginBottom: '16px'
-                },
-              }}
-              className={classes.input}
-              color="secondary"
-            />
-            <TextField
-              variant="outlined"
-              label="Curriculum"
-              value={curriculum}
-              onChange={(event) => setCurriculum(event.target.value)}
-              InputLabelProps={{
-                style: {
-                  color: "black", marginBottom: '16px'
-                },
-              }}
-              className={classes.input}
-              color="secondary"
-            />
+              startIcon={<EditRounded />}
+              onClick={handleGeneration}
+            >
+              Generate Note
+            </Button>
+          )}
 
-
-        <Link to="/generator">
-          <Button
-            variant="contained"
-            onClick={handleGenerateNote}
-            className={classes.btn}
-            color="secondary"
-            startIcon={<RecordVoiceOver />}
-          >
-            Generate Note
-          </Button>
-        </Link>
-        {notes.map((note) => (
-      <div key={note.id}>
-        <h2>{note.subject}</h2>
-        <h3>{note.topic}</h3>
-        <h3>{note.level}</h3>
-        <h3>{note.curriculum}</h3>
-        <p>{note.topic}</p>
-        <ul>
-          {note.images.map((image) => (
-            <li key={image.id}>
-              <img height="20px" width="20px" src={image.url} alt={image.prompt} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
-        
         </div>
       ) : null}
     </div>

@@ -3,6 +3,8 @@ import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import Appdrawer from "../components/Appdrawer";
 import { Container, makeStyles } from "@material-ui/core";
 import html2pdf from "html2pdf.js";
+import { useParams } from "react-router";
+// import e from "express";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -54,25 +56,32 @@ function Generator() {
   const classes = useStyles();
   const pdfRef = React.useRef();
   const [markdown, setMarkdown] = useState(data.clean);
+  const { id } = useParams();
   const [appDrawer, setAppDrawer] = useState(true);
+  const [content, setContent] = useState("");
+  const [markdownText, setMarkdownText] = useState("");
 
   useEffect(() => {
-    let formatted = data.clean;
-    data.images.map((image) => {
-      formatted = formatted.replace(
+    setContent(
+      JSON.parse(localStorage.getItem("subject")).find((item) => item.id == id)
+    );
+    setMarkdownText(content.clean);
+    console.log(content);
+    console.log(markdownText);
+  }, [id]);
+
+  useEffect(() => {
+    let formatted = content.clean;
+    console.log(content.images);
+    content?.images?.map((image) => {
+      formatted = formatted?.replace(
         `[img:${image.id}]`,
         `![${image.prompt}](${image.url})`
       );
-      setMarkdown(formatted);
+      setMarkdownText(formatted);
     });
-  }, []);
-  //   useEffect(() => {
-  //     fetch("https://www.markdownguide.org/api/v1/basic-syntax.json")
-  //       .then((res) => res.json)
-  //       .then((data) => console.log(data));
-  //   }, []);
-  //   console.log(markdown);
-
+  }, [content]);
+  console.log(markdownText);
   const handleDownload = () => {
     setAppDrawer(false);
     const input = pdfRef.current;
@@ -86,12 +95,11 @@ function Generator() {
     };
     html2pdf().from(input).set(options).save();
   };
-
   return (
     <div className={classes.generator} ref={pdfRef}>
       {appDrawer && <Appdrawer />}
       <Container className="markdownContainer">
-        <ReactMarkdown>{markdown}</ReactMarkdown>
+        <ReactMarkdown>{markdownText}</ReactMarkdown>
         <button onClick={handleDownload}>Download PDF</button>
       </Container>
     </div>

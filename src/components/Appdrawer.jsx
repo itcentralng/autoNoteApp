@@ -25,13 +25,14 @@ import {
   AddCircleOutlineSharp,
   CheckBox,
   CreateRounded,
+  DeleteForever,
   NotificationsNone,
   NotificationsNoneOutlined,
   SearchOutlined,
   SubjectOutlined,
 } from "@material-ui/icons";
-import { useHistory, useLocation } from "react-router-dom";
-import React from "react";
+import { Link, useHistory, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 const drawerWidth = 300;
 const useStyles = makeStyles(function (theme) {
@@ -41,6 +42,7 @@ const useStyles = makeStyles(function (theme) {
     },
     drawer: {
       width: drawerWidth,
+      overflowX: "hidden",
       [theme.breakpoints.down("sm")]: {
         width: "50%",
       },
@@ -51,6 +53,8 @@ const useStyles = makeStyles(function (theme) {
     paperDrawer: {
       width: drawerWidth,
       backgroundColor: "gray",
+      overflowX: "hidden",
+
       [theme.breakpoints.down("sm")]: {
         width: "50%",
       },
@@ -70,35 +74,69 @@ const useStyles = makeStyles(function (theme) {
       fontWeight: 400,
       padding: "1.5rem",
       borderBottom: "1px solid black",
-      width: "100vw",
+      width: "100%",
+    },
+    btn: {
+      width: "fit-content",
+      padding: "1rem 3rem",
+      fontSize: "1.3rem",
     },
   };
 });
 function Appdrawer() {
+  const navigate = useNavigate();
   let location = useLocation();
   const classes = useStyles();
-  const subjects = [
-    {
-      subject: "Biology",
-      topic: ["Cell"],
-      Path: "/",
-    },
-    {
-      subject: "Physics",
-      topic: ["Gravitational Pull", "Acceleration"],
-      Path: "/create",
-    },
-    {
-      subject: "Chemistry",
-      topic: ["Chemical Balancing"],
-      Path: "/List",
-    },
-    {
-      subject: "Mathematics",
-      topic: ["Algebra"],
-      Path: "/reminder",
-    },
-  ];
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [subject, setSubject] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
+  const [groupedData, setGroupedData] = useState([]);
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/notes`, {
+      headers: {
+        Authorization: "Bearer " + user.token,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setSubject(data);
+        localStorage.setItem("subject", JSON.stringify(data));
+      });
+  }, []);
+  useEffect(() => {
+    setGroupedData(
+      subject.reduce(
+        (acc, cur) => {
+          const index = acc.findIndex((item) => item.subject === cur.subject);
+          if (index !== -1) {
+            acc[index].topics.push({
+              id: cur.id,
+              topic: cur.topic,
+              clean: cur.clean,
+            });
+          } else {
+            acc.push({
+              subject: cur.subject,
+              topics: [{ id: cur.id, topic: cur.topic, clean: cur.clean }],
+            });
+          }
+          return acc;
+        },
+        [subject]
+      )
+    );
+  }, [subject]);
+
+  function handleDelete(id) {
+    fetch(`${process.env.REACT_APP_API_URL}/note/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + user.token,
+      },
+    });
+    let newList = subject.filter((aSubject) => aSubject.id != id);
+    setSubject(newList);
+  }
   return (
     <div className={classes.create}>
       <Drawer
@@ -107,11 +145,28 @@ function Appdrawer() {
         anchor="left"
         classes={{ paper: classes.paperDrawer }}
       >
-        <Typography variant="h4" className={classes.title}>
-          ClassNaut
-        </Typography>
-        <List>
-          {subjects.map(function (subject) {
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography variant="h4" className={classes.title}>
+            ClassNaut
+          </Typography>
+          <Link to="/create">
+            <Button
+              className={classes.btn}
+              variant="contained"
+              color="secondary"
+            >
+              CREATE NOTE
+            </Button>
+          </Link>
+        </div>
+        <List style={{ width: "100%" }}>
+          {groupedData?.map(function (subject) {
             return (
               <Accordion>
                 <AccordionSummary
@@ -130,36 +185,31 @@ function Appdrawer() {
                   }}
                 >
                   <List>
-                    {subject.topic.map((aTopic) => {
+                    {subject?.topics?.map((topic) => {
                       return (
-                        <ListItem className={classes.topic}>{aTopic}</ListItem>
+                        <div style={{ display: "flex" }}>
+                          <ListItem
+                            fullWidth
+                            className={classes.topic}
+                            onClick={() => {
+                              console.log("clicked");
+                              // window.location.reload();
+                              // localStorage.setItem("topicId", topic.id);
+                              navigate(`/generator/${topic.id}`);
+                            }}
+                          >
+                            {topic.topic}
+                          </ListItem>
+                          <IconButton
+                            onClick={() => {
+                              handleDelete(topic.id);
+                            }}
+                          >
+                            <DeleteForever />
+                          </IconButton>
+                        </div>
                       );
                     })}
-
-                    <TextField
-                      label="Add a new topic"
-                      color="secondary"
-                      style={{
-                        padding: "1rem",
-                      }}
-                      //   fullWidth
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton>
-                              <AddCircleOutlineOutlined color="danger" />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          color: "black",
-                          padding: "1rem",
-                          fontSize: "1.4rem",
-                        },
-                      }}
-                    />
                   </List>
                 </AccordionDetails>
               </Accordion>
