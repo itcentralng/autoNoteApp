@@ -113,7 +113,7 @@ function Login() {
             <Typography variant="h3">
               {location.pathname == "/teacher" ? "Teacher" : "Student"}
             </Typography>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleLogin}>
             <FormControl>
             <FormGroup>
             <TextField
