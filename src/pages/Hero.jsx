@@ -59,6 +59,7 @@ function Hero() {
             <Typography variant="h1">
               A note-taking app specifically designed for teachers and students
             </Typography>
+            <Link to="/register">
             <Button
               className={classes.btn}
               variant="contained"
@@ -66,6 +67,7 @@ function Hero() {
             >
               Get started
             </Button>
+            </Link>
           </Grid>
           <Grid item md={6} sm={12} xs={12}>
             <img

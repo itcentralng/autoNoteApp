@@ -73,17 +73,13 @@ import {
               }}
             >
               <img
-                src={
-                  location.pathname == "/teacher"
-                    ? "/Images/teacherImage.jpg"
-                    : "/Images/studentImage.jpg"
-                }
+                src={"/Images/teacherImage.jpg"}
                 height="200rem"
                 width="200rem"
                 alt=""
               />
               <Typography variant="h3">
-                {location.pathname == "/teacher" ? "Teacher" : "Student"}
+                Teacher
               </Typography>
               <form onSubmit={handleSubmit}>
               <TextField
