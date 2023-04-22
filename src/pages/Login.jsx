@@ -40,11 +40,7 @@ function Login() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      navigate("/create");
-    }
-  }, []);
+  const [wrongCredential, setWrongCredentials] = useState(false);
 
   // console.log(location.pathname);
   const [email, setEmail] = useState("");
@@ -61,28 +57,18 @@ function Login() {
       }),
     }).then((res) => {
       res.json().then((data) => {
-        if (data.token) {
+        if (res.ok) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data));
           navigate("/create");
+          setWrongCredentials(false);
+        } else {
+          setWrongCredentials(true);
         }
       });
     });
   }
-  function checkTokenExpiration() {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const { exp } = JSON.parse(atob(token.split(".")[1])); // parse the expiration time from the token payload
-      if (Date.now() >= exp * 1000) {
-        // token has expired, redirect to login page
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
-      }
-    }
-  }
 
-  checkTokenExpiration();
   return (
     <div className={classes.login}>
       <Container className={classes.loginContainer}>
@@ -140,6 +126,11 @@ function Login() {
               className={classes.input}
               color="secondary"
             />
+            {wrongCredential ? (
+              <Typography variant="h6" style={{ color: "red" }}>
+                Wrong Credentials. Please try again
+              </Typography>
+            ) : null}
             {/* <Link to={location.pathname === "/teacher" ? "/subject" : null}> */}
             <Button
               variant="contained"

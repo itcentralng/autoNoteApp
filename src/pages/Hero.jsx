@@ -110,12 +110,13 @@ function Hero() {
               />
               <Typography variant="h3">Student</Typography>
 
-              <Link to="/student">
+              <Link to="/">
                 {" "}
                 <Button
                   variant="contained"
                   className={classes.btn}
                   color="secondary"
+                  disabled
                 >
                   Log in
                 </Button>

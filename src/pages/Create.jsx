@@ -110,6 +110,20 @@ function Create() {
       <Container className={classes.createContainer}>
         <Card className={classes.card} elevation={10}>
           <CardContent className={classes.cardContent}>
+            <img src="/Icons/edit.png" width="50rem" height="50rem" alt="" />
+            <Link to="/write">
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.btn}
+              >
+                Write Note
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+        <Card className={classes.card} elevation={10}>
+          <CardContent className={classes.cardContent}>
             <img src="/Icons/mic.png" width="50rem" height="50rem" alt="" />
             <Link to="/record">
               <Button
@@ -132,20 +146,6 @@ function Create() {
                 className={classes.btn}
               >
                 Upload Audio
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-        <Card className={classes.card} elevation={10}>
-          <CardContent className={classes.cardContent}>
-            <img src="/Icons/edit.png" width="50rem" height="50rem" alt="" />
-            <Link to="/write">
-              <Button
-                variant="contained"
-                color="secondary"
-                className={classes.btn}
-              >
-                Write Note
               </Button>
             </Link>
           </CardContent>
