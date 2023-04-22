@@ -2,7 +2,7 @@
 
 This app uses the [KlassNaut Flask Server](https://github.com/itcentralng/autoNote).
 
-The one hosted on vercel may not be upto date but you can run it locally.
+If you cant access the one hosted on vercel you can run it locally.
 
 ## .env File Requirements
 

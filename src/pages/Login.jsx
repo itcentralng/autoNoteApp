@@ -45,7 +45,9 @@ function Login() {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
 
+
   const [wrongCredential, setWrongCredentials] = useState(false);
+
 
   // console.log(location.pathname);
   const [email, setEmail] = useState("");
