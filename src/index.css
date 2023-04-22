@@ -41,6 +41,11 @@ html {
   text-decoration: underline;
   color: #ffa500;
 }
+.markdownContainer h3 {
+  font-size: 2rem;
+  text-decoration: underline;
+  color: orangered;
+}
 .markdownContainer p {
   font-size: 2rem;
   color: grey;

@@ -50,29 +50,39 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   function handleLogin() {
-    if (location.pathname === "/teacher") {
-      fetch(`${process.env.REACT_APP_API_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      }).then((res) => {
-        res.json().then((data) => {
-          if (data.token) {
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data));
-            navigate("/create");
-          }
-        });
+    fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    }).then((res) => {
+      res.json().then((data) => {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data));
+          navigate("/create");
+        }
       });
-    } else {
-      console.log("this is for student ");
+    });
+  }
+  function checkTokenExpiration() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const { exp } = JSON.parse(atob(token.split(".")[1])); // parse the expiration time from the token payload
+      if (Date.now() >= exp * 1000) {
+        // token has expired, redirect to login page
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
     }
   }
+
+  checkTokenExpiration();
   return (
     <div className={classes.login}>
       <Container className={classes.loginContainer}>
