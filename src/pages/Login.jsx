@@ -110,6 +110,7 @@ function Login() {
             <Typography variant="h3">
               {location.pathname == "/teacher" ? "Teacher" : "Student"}
             </Typography>
+            <form onSubmit={handleSubmit}>
             <TextField
               variant="outlined"
               label="Username"
@@ -127,6 +128,8 @@ function Login() {
             />
             <TextField
               variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               label="Password"
               value={password}
               onChange={(e) => {
