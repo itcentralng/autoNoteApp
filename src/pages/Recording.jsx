@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import Appdrawer from "../components/Appdrawer";
 import { Button, TextField, Typography, makeStyles } from "@material-ui/core";
-
 import {
   CloudUpload,
   Create,
@@ -16,21 +15,20 @@ import { useState } from "react";
 import { io } from "socket.io-client";
 import { ScaleLoader } from "react-spinners";
 
-
 const useStyles = makeStyles((theme) => {
   return {
     recording: {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      height: "80vh",
+      height: "auto",
     },
     recorder: {
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: "3rem",
+      gap: "2rem",
     },
     btn: {
       width: "fit-content",
@@ -52,6 +50,22 @@ const useStyles = makeStyles((theme) => {
   };
 });
 function Recording() {
+  const classes = useStyles();
+  const location = useLocation();
+  const [loader, setLoader] = useState(false);
+  const [record, setRecord] = useState(false);
+  const [recordedBlob, setRecordedBlob] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [audio, setAudio] = useState(null);
+  const [subject, setSubject] = useState("");
+  const [topic, setTopic] = useState("");
+  const [curriculum, setCurriculum] = useState("");
+  const [level, setLevel] = useState("");
+  const navigate = useNavigate();
+  const [generatedNote, setGeneratedNote] = useState({});
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [messages, setMessages] = useState([]);
+
   const formObj = [
     {
       label: "Subject",
@@ -66,26 +80,12 @@ function Recording() {
       label: "Level",
     },
   ];
-  const classes = useStyles();
-  const location = useLocation();
-  const [loader, setLoader] = useState(false);
-  const [record, setRecord] = useState(false);
-  const [recordedBlob, setRecordedBlob] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const [subject, setSubject] = useState("");
-  const [topic, setTopic] = useState("");
-  const [curriculum, setCurriculum] = useState("");
-  const [level, setLevel] = useState("");
-  const navigate = useNavigate();
-  const [generatedNote, setGeneratedNote] = useState({});
-  const user = JSON.parse(localStorage.getItem("user"));
 
   function handleGeneration() {
     fetch(`${process.env.REACT_APP_API_URL}/note`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: "Bearer " + user.token,
       },
       body: JSON.stringify({
@@ -104,10 +104,38 @@ function Recording() {
     });
   }
 
+  function handleFileInputChange(event) {
+    const file = event.target.files[0];
+    console.log(file);
+    setAudio(file);
+  }
+  console.log(audio);
+
+  function handleUploadGeneration() {
+    const formData = new FormData();
+    formData.append("audio", audio);
+    formData.append("subject", subject);
+    formData.append("level", level);
+    formData.append("curriculum", curriculum);
+    formData.append("topic", topic);
+    fetch(`${process.env.REACT_APP_API_URL}/note/audio`, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + user.token,
+      },
+      body: formData,
+    }).then((res) => {
+      res.json().then((data) => {
+        if (data.status == "success") {
+          console.log(data.message);
+          setLoader(true);
+        }
+      });
+    });
+  }
+
   const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
   console.log("authToken: ", authToken); // Log the authentication token to the console
-
-  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const socket = io("https://socket.klassnaut.itcentral.ng/", {
@@ -159,59 +187,7 @@ function Recording() {
     console.log("recordedBlob is: ", recordedBlob);
     setRecordedBlob(recordedBlob);
   };
-  const visualSettings = {
-    showWave: true,
-    waveType: "sine",
-    width: 500,
-    height: 100,
-    backgroundColor: "#f1f1f1",
-    strokeColor: "#000000",
-  };
-  const audioContextAttrs = {
-    sampleRate: 44100,
-    latencyHint: "interactive",
-    blockSize: 512,
-  };
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    console.log(file);
-    setSelectedFile(file);
-    console.log("Uploading File....");
-  
-    const authToken = localStorage.getItem("authToken"); // Get the authentication token from local storage
-    console.log("authToken: ", authToken); // Log the authentication token to the console
-  
-    const formData = new FormData();
-    formData.append("file", file);
-  
-    try {
-      const response = await fetch("https://api.klassnote.itcentral.ng/note/audio", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-  
-      const data = await response.json();
-  
-      if (data.authenticated === false) {
-        throw new Error("User is not authenticated");
-      }
-  
-      console.log("file successfully uploaded to server", data);
-    } catch (error) {
-      console.error("There was an error!", error);
-    }
-  };
-  
-    
-  
+
   useEffect(() => {
     if (selectedFile) {
       const objectUrl = URL.createObjectURL(selectedFile);
@@ -221,136 +197,132 @@ function Recording() {
   return (
     <div className={classes.recording}>
       <Appdrawer />
-      {location.pathname === "/record" ? (
-        <div className={classes.recorder}>
-          <ReactMic record={record} className="sound-wave" onStop={onStop} />
+      <div className={classes.write}>
+        {loader ? (
+          <ScaleLoader />
+        ) : (
+          <form className={classes.form}>
+            {formObj.map((form) => {
+              return (
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  // value={}
+                  onChange={(e) => {
+                    if (form.label === "Subject") {
+                      setSubject(e.target.value);
+                    } else if (form.label === "Topic") {
+                      setTopic(e.target.value);
+                    } else if (form.label === "Curriculum") {
+                      setCurriculum(e.target.value);
+                    } else if (form.label === "Level") {
+                      setLevel(e.target.value);
+                    }
+                  }}
+                  label={form.label}
+                  InputLabelProps={{
+                    style: {
+                      color: "black",
+                    },
+                  }}
+                  className={classes.input}
+                  color="secondary"
+                />
+              );
+            })}
+          </form>
+        )}
+        {location.pathname == "/upload" ? (
+          <div className={classes.recorder}>
+            {audio && (
+              <div>
+                <Typography variant="h4" color="secondary">
+                  Selected File:
+                </Typography>
+                <audio controls>
+                  <source src={URL.createObjectURL(audio)} />
+                </audio>
+              </div>
+            )}{" "}
+            <input
+              accept="audio/*"
+              style={{ display: "none" }}
+              id="file-input"
+              type="file"
+              onChange={handleFileInputChange}
+            />
+            <label htmlFor="file-input">
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.btn}
+                component="span"
+                startIcon={<CloudUpload />}
+              >
+                Upload Audio
+              </Button>
+            </label>
+          </div>
+        ) : location.pathname === "/record" ? (
+          <div>
+            <ReactMic record={record} className="sound-wave" onStop={onStop} />
+            <div className={classes.recorder}>
+              <Button
+                variant="contained"
+                className={classes.btn}
+                color="secondary"
+                onClick={startRecording}
+                startIcon={<RecordVoiceOver />}
+              >
+                Start Recording
+              </Button>
+              <Button
+                variant="contained"
+                className={classes.btn}
+                color="secondary"
+                onClick={stopRecording}
+                startIcon={<RecordVoiceOver />}
+              >
+                Stop Recording
+              </Button>
+              {recordedBlob && (
+                <div>
+                  <audio src={recordedBlob.blobURL} controls />
+                </div>
+              )}{" "}
+            </div>
+          </div>
+        ) : null}
+        ;
+        {loader ? (
           <Button
             variant="contained"
             className={classes.btn}
             color="secondary"
-            onClick={startRecording}
-            startIcon={<RecordVoiceOver />}
+            startIcon={<EditRounded />}
+            onClick={handleGeneration}
+            disabled
           >
-            Start Recording
+            Generating Note ...
           </Button>
+        ) : (
           <Button
             variant="contained"
             className={classes.btn}
             color="secondary"
-            onClick={stopRecording}
-            startIcon={<RecordVoiceOver />}
+            startIcon={<EditRounded />}
+            onClick={
+              location.pathname === "/write"
+                ? handleGeneration
+                : location.pathname === "/upload"
+                ? handleUploadGeneration
+                : null
+            }
           >
-            Stop Recording
+            Generate Note
           </Button>
-          {recordedBlob && (
-            <div>
-              <audio src={recordedBlob.blobURL} controls />
-            </div>
-          )}{" "}
-          <Link to="/generate">
-            <Button
-              className={classes.btn}
-              color="secondary"
-              variant="contained"
-              startIcon={<Create />}
-            >
-              Generate
-            </Button>
-          </Link>
-        </div>
-      ) : location.pathname === "/upload" ? (
-        <div className={classes.recorder}>
-          {selectedFile && (
-            <div>
-              <Typography variant="h4" color="secondary">
-                Selected File:
-              </Typography>
-              <audio controls>
-                <source src={URL.createObjectURL(selectedFile)} />
-              </audio>
-            </div>
-          )}{" "}
-          <input
-            accept="audio/*"
-            style={{ display: "none" }}
-            id="file-input"
-            type="file"
-            onChange={handleFileChange}
-          />
-          <label htmlFor="file-input">
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.btn}
-              component="span"
-              startIcon={<CloudUpload />}
-            >
-              Upload Audio
-            </Button>
-          </label>
-        </div>
-      ) : location.pathname === "/write" ? (
-
-        <div className={classes.write}>
-          {loader ? (
-            <ScaleLoader />
-          ) : (
-            <form className={classes.form}>
-              {formObj.map((form) => {
-                return (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    // value={}
-                    onChange={(e) => {
-                      if (form.label === "Subject") {
-                        setSubject(e.target.value);
-                      } else if (form.label === "Topic") {
-                        setTopic(e.target.value);
-                      } else if (form.label === "Curriculum") {
-                        setCurriculum(e.target.value);
-                      } else if (form.label === "Level") {
-                        setLevel(e.target.value);
-                      }
-                    }}
-                    label={form.label}
-                    InputLabelProps={{
-                      style: {
-                        color: "black",
-                      },
-                    }}
-                    className={classes.input}
-                    color="secondary"
-                  />
-                );
-              })}
-            </form>
-          )}
-          {loader ? (
-            <Button
-              variant="contained"
-              className={classes.btn}
-              color="secondary"
-              startIcon={<EditRounded />}
-              onClick={handleGeneration}
-              disabled
-            >
-              Generating Note ...
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              className={classes.btn}
-              color="secondary"
-              startIcon={<EditRounded />}
-              onClick={handleGeneration}
-            >
-              Generate Note
-            </Button>
-          )}
-
-        </div>
-      ) : null}
+        )}
+      </div>
     </div>
   );
 }
