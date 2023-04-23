@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import Appdrawer from "../components/Appdrawer";
-import { Container, makeStyles } from "@material-ui/core";
+import { Button, Container, makeStyles } from "@material-ui/core";
 import html2pdf from "html2pdf.js";
 import { useParams } from "react-router";
+import { CloudDownloadTwoTone } from "@material-ui/icons";
 // import e from "express";
 
 const useStyles = makeStyles((theme) => {
@@ -11,6 +12,12 @@ const useStyles = makeStyles((theme) => {
     generator: {
       display: "flex",
       justifyContent: "space-between",
+    },
+    btn: {
+      width: "fit-content",
+      padding: "1rem 3rem",
+      fontSize: "1.3rem",
+      marginTop: "2rem",
     },
   };
 });
@@ -60,6 +67,7 @@ function Generator() {
   const [appDrawer, setAppDrawer] = useState(true);
   const [content, setContent] = useState("");
   const [markdownText, setMarkdownText] = useState("");
+  const [printbtn, setPrintbtn] = useState(true);
 
   useEffect(() => {
     setContent(
@@ -82,25 +90,24 @@ function Generator() {
     });
   }, [content]);
   console.log(markdownText);
-  const handleDownload = () => {
-    setAppDrawer(false);
-    const input = pdfRef.current;
-    const options = {
-      margin: 1,
-      width: 8.5,
-      filename: "my_document.pdf",
-      image: { type: "png", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-    };
-    html2pdf().from(input).set(options).save();
+  const handlePrint = () => {
+    window.print();
+    setPrintbtn(!printbtn);
   };
   return (
     <div className={classes.generator} ref={pdfRef}>
       {appDrawer && <Appdrawer />}
       <Container className="markdownContainer">
+        <Button
+          startIcon={<CloudDownloadTwoTone style={{ color: "white" }} />}
+          className={classes.btn}
+          variant="contained"
+          color="secondary"
+          onClick={handlePrint}
+        >
+          Export Note
+        </Button>
         <ReactMarkdown>{markdownText}</ReactMarkdown>
-        <button onClick={handleDownload}>Download PDF</button>
       </Container>
     </div>
   );
