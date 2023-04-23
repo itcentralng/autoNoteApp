@@ -54,8 +54,7 @@ function Recording() {
   const location = useLocation();
   const [loader, setLoader] = useState(false);
   const [record, setRecord] = useState(false);
-  const [recordedBlob, setRecordedBlob] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [recordedAudio, setRecordedAudio] = useState(null);
   const [audio, setAudio] = useState(null);
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
@@ -113,7 +112,10 @@ function Recording() {
 
   function handleUploadGeneration() {
     const formData = new FormData();
-    formData.append("audio", audio);
+    formData.append(
+      "audio",
+      location.pathname === "/upload" ? audio : recordedAudio
+    );
     formData.append("subject", subject);
     formData.append("level", level);
     formData.append("curriculum", curriculum);
@@ -178,22 +180,21 @@ function Recording() {
 
   const startRecording = () => {
     setRecord(true);
+    setRecordedAudio(null);
   };
 
   const stopRecording = () => {
     setRecord(false);
   };
   const onStop = (recordedBlob) => {
-    console.log("recordedBlob is: ", recordedBlob);
-    setRecordedBlob(recordedBlob);
+    const recordedFile = new File([recordedBlob.blob], "recorded_audio.wav", {
+      type: recordedBlob.blob.type,
+      lastModified: Date.now(),
+    });
+    setRecordedAudio(recordedFile);
+    console.log(recordedFile);
   };
 
-  useEffect(() => {
-    if (selectedFile) {
-      const objectUrl = URL.createObjectURL(selectedFile);
-      return () => URL.revokeObjectURL(objectUrl);
-    }
-  }, [selectedFile]);
   return (
     <div className={classes.recording}>
       <Appdrawer />
@@ -285,10 +286,10 @@ function Recording() {
               >
                 Stop Recording
               </Button>
-              {recordedBlob && (
-                <div>
-                  <audio src={recordedBlob.blobURL} controls />
-                </div>
+              {recordedAudio && (
+                <audio controls>
+                  <source src={URL.createObjectURL(recordedAudio)} />
+                </audio>
               )}{" "}
             </div>
           </div>
@@ -315,6 +316,8 @@ function Recording() {
               location.pathname === "/write"
                 ? handleGeneration
                 : location.pathname === "/upload"
+                ? handleUploadGeneration
+                : location.pathname === "/record"
                 ? handleUploadGeneration
                 : null
             }
