@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => {
     navItems: {
       display: "flex",
       width: "50%",
+      justifyContent: "space-between",
       [theme.breakpoints.down("sm")]: {
         display: "none",
       },
@@ -51,7 +52,7 @@ function Navbar() {
     },
     {
       title: "Log in",
-      Link: "/login",
+      Link: "/teacher",
     },
   ];
   const classes = useStyles();
@@ -66,9 +67,9 @@ function Navbar() {
         <List className={classes.navItems}>
           {navItems.map((navItem) => {
             return (
-              <ListItem key={navItem.title} className={classes.navItem}>
-                {navItem.title}
-              </ListItem>
+              <Link to={navItem.Link} className={classes.navItem}>
+                <ListItem key={navItem.title}>{navItem.title}</ListItem>
+              </Link>
             );
           })}
         </List>

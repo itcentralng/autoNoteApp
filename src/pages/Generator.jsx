@@ -40,8 +40,8 @@ function Generator() {
   }, [id]);
 
   useEffect(() => {
-    let formatted = content.clean;
-    console.log(content.images);
+    let formatted = content?.clean;
+    console.log(content?.images);
     content?.images?.map((image) => {
       formatted = formatted?.replace(
         `[img:${image.id}]`,
