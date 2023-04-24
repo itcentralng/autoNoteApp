@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => {
 function Generator() {
   const classes = useStyles();
   const pdfRef = React.useRef();
-  const [markdown, setMarkdown] = useState(data.clean);
   const { id } = useParams();
   const [appDrawer, setAppDrawer] = useState(true);
   const [content, setContent] = useState("");
