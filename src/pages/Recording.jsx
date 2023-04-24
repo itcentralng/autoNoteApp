@@ -84,7 +84,7 @@ function Recording() {
     fetch(`${process.env.REACT_APP_API_URL}/note`, {
       method: "POST",
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
         Authorization: "Bearer " + user.token,
       },
       body: JSON.stringify({
