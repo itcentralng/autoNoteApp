@@ -110,6 +110,7 @@ function Register() {
               <TextField
                 variant="outlined"
                 value={password}
+                type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 label="Password"
                 InputLabelProps={{
