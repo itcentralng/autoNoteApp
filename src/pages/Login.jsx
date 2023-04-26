@@ -46,10 +46,12 @@ function Login() {
   const [loader, setLoader] = useState(false);
 
   const [wrongCredential, setWrongCredentials] = useState(false);
+  
 
   // console.log(location.pathname);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const isFormValid = email && password;
   function handleLogin() {
     setLoader(true);
     fetch(`${process.env.REACT_APP_API_URL}/login`, {
@@ -148,6 +150,7 @@ function Login() {
                     color="secondary"
                     className={classes.btn}
                     onClick={handleLogin}
+                    disabled={!isFormValid}
                   >
                     {loader ? (
                       <ScaleLoader color="#ffffff" height={15} />

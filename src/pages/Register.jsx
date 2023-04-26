@@ -41,6 +41,8 @@ function Register() {
   const [password, setPassword] = useState("");
   const [RegisterMessage, setRegisterMessage] = useState("");
 
+  const isFormValid = email && password;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -124,6 +126,7 @@ function Register() {
                 type="submit"
                 color="secondary"
                 className={classes.btn}
+                disabled={!isFormValid}
               >
                 Register
               </Button>
