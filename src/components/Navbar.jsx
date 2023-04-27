@@ -36,12 +36,12 @@ function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   function handleLogin() {
-    // TODO: Implement login functionality
+   
     setIsLoggedIn(true);
   }
 
   function handleLogout() {
-    // TODO: Implement logout functionality
+    
     setIsLoggedIn(false);
   }
 
