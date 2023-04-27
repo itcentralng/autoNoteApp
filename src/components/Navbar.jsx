@@ -35,6 +35,11 @@ const useStyles = makeStyles((theme) => {
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  function handleLogin() {
+    // TODO: Implement login functionality
+    setIsLoggedIn(true);
+  }
+
   function handleLogout() {
     // TODO: Implement logout functionality
     setIsLoggedIn(false);
@@ -60,9 +65,11 @@ function Navbar() {
     isLoggedIn ? {
       title: "Logout",
       Link: "#",
+      onclick:{handleLogout},
     } : {
       title: "Log in",
       Link: "/teacher",
+      onclick:{handleLogin},
     },
   ];
   
