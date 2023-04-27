@@ -65,13 +65,14 @@ function Navbar() {
     isLoggedIn ? {
       title: "Logout",
       Link: "#",
-      onclick:{handleLogout},
+      onclick: handleLogout,
     } : {
       title: "Log in",
       Link: "/teacher",
-      onclick:{handleLogin},
+      onclick: handleLogin,
     },
   ];
+  
   
   const classes = useStyles();
   return (
