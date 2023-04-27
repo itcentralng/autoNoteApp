@@ -111,7 +111,7 @@ function Login() {
                 <FormGroup style={{ alignItems: "center" }}>
                   <TextField
                     variant="outlined"
-                    label="Username"
+                    label="Email"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
