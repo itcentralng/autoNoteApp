@@ -59,7 +59,7 @@ function Navbar() {
     },
     isLoggedIn ? {
       title: "Logout",
-      Link: "/logout",
+      Link: "#",
     } : {
       title: "Log in",
       Link: "/teacher",
