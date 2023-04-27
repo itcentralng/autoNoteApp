@@ -10,6 +10,16 @@ import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
   return {
+    logo: {
+      [theme.breakpoints.down("sm")]: {
+        color: "black",
+        fontSize: "3rem",
+        zIndex: 2,
+        position: "absolute",
+        top: 15,
+        left: 10,
+      },
+    },
     navbarContainer: {
       display: "flex",
       flexDirection: "row",

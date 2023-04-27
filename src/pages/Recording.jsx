@@ -46,6 +46,9 @@ const useStyles = makeStyles((theme) => {
       display: "flex",
       flexDirection: "column",
       gap: "3rem",
+      [theme.breakpoints.down("sm")]: {
+        width: "90vw",
+      },
     },
   };
 });

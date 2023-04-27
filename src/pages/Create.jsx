@@ -76,7 +76,7 @@ const useStyles = makeStyles(function (theme) {
       flexWrap: "wrap",
       gap: "3rem",
       [theme.breakpoints.down("sm")]: {
-        width: "50%",
+        width: "100%",
         justifyContent: "flex-end",
       },
     },

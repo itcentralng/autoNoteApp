@@ -24,8 +24,10 @@ import {
   AddCircleOutlineOutlined,
   AddCircleOutlineSharp,
   CheckBox,
+  Close,
   CreateRounded,
   DeleteForever,
+  Menu,
   NotificationsNone,
   NotificationsNoneOutlined,
   SearchOutlined,
@@ -39,6 +41,9 @@ const useStyles = makeStyles(function (theme) {
   return {
     create: {
       display: "flex",
+      [theme.breakpoints.down("sm")]: {
+        justifyContent: "space-between",
+      },
     },
     drawer: {
       width: drawerWidth,
@@ -54,9 +59,11 @@ const useStyles = makeStyles(function (theme) {
       width: drawerWidth,
       backgroundColor: "gray",
       overflowX: "hidden",
+      // transition: "all ease-in-out 2s",
 
       [theme.breakpoints.down("sm")]: {
-        width: "50%",
+        width: "85vw",
+        transition: "all ease-in-out 2s",
       },
     },
 
@@ -65,6 +72,18 @@ const useStyles = makeStyles(function (theme) {
     },
     title: {
       padding: theme.spacing(2),
+    },
+    hamburgerIcon: {
+      display: "none",
+      [theme.breakpoints.down("sm")]: {
+        display: "block",
+        color: "black",
+        fontSize: "3rem",
+        zIndex: 2,
+        position: "absolute",
+        top: 10,
+        right: 10,
+      },
     },
     appBar: {
       width: `calc(100% - ${drawerWidth}px)`,
@@ -91,6 +110,7 @@ function Appdrawer() {
   const [subject, setSubject] = useState([]);
   const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [groupedData, setGroupedData] = useState([]);
+  const [showDrawer, setShowDrawer] = useState(true);
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/notes`, {
       headers: {
@@ -139,84 +159,102 @@ function Appdrawer() {
   }
   return (
     <div className={classes.create}>
-      <Drawer
-        className={classes.drawer}
-        variant="permanent"
-        anchor="left"
-        classes={{ paper: classes.paperDrawer }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+      {showDrawer && (
+        <Drawer
+          className={classes.drawer}
+          variant="permanent"
+          anchor="left"
+          classes={{ paper: classes.paperDrawer }}
         >
-          <Typography variant="h4" className={classes.title}>
-            KlassNaut
-          </Typography>
-          <Link to="/create">
-            <Button
-              className={classes.btn}
-              variant="contained"
-              color="secondary"
-            >
-              CREATE NOTE
-            </Button>
-          </Link>
-        </div>
-        <List style={{ width: "100%" }}>
-          {groupedData?.map(function (subject) {
-            return (
-              <Accordion>
-                <AccordionSummary
-                  //   expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography color="secondary" variant="h4">
-                    {subject.subject}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails
-                  style={{
-                    padding: 0,
-                    backgroundColor: "whitesmoke",
-                  }}
-                >
-                  <List style={{ width: "100%" }}>
-                    {subject?.topics?.map((topic) => {
-                      return (
-                        <div style={{ display: "flex" }}>
-                          <ListItem
-                            fullWidth
-                            className={classes.topic}
-                            onClick={() => {
-                              console.log("clicked");
-                              // window.location.reload();
-                              // localStorage.setItem("topicId", topic.id);
-                              navigate(`/generator/${topic.id}`);
-                            }}
-                          >
-                            {topic.topic}
-                          </ListItem>
-                          <IconButton
-                            onClick={() => {
-                              handleDelete(topic.id);
-                            }}
-                          >
-                            <DeleteForever style={{ color: "red" }} />
-                          </IconButton>
-                        </div>
-                      );
-                    })}
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            );
-          })}
-        </List>
-      </Drawer>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography variant="h4" className={classes.title}>
+              KlassNaut
+            </Typography>
+            <Link to="/create">
+              <Button
+                className={classes.btn}
+                variant="contained"
+                color="secondary"
+              >
+                CREATE NOTE
+              </Button>
+            </Link>
+          </div>
+          <List style={{ width: "100%" }}>
+            {groupedData?.map(function (subject) {
+              return (
+                <Accordion>
+                  <AccordionSummary
+                    //   expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography color="secondary" variant="h4">
+                      {subject.subject}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails
+                    style={{
+                      padding: 0,
+                      backgroundColor: "whitesmoke",
+                    }}
+                  >
+                    <List style={{ width: "100%" }}>
+                      {subject?.topics?.map((topic) => {
+                        return (
+                          <div style={{ display: "flex" }}>
+                            <ListItem
+                              fullWidth
+                              className={classes.topic}
+                              onClick={() => {
+                                setShowDrawer(!showDrawer);
+                                console.log("clicked");
+                                // window.location.reload();
+                                // localStorage.setItem("topicId", topic.id);
+                                navigate(`/generator/${topic.id}`);
+                              }}
+                            >
+                              {topic.topic}
+                            </ListItem>
+                            <IconButton
+                              onClick={() => {
+                                handleDelete(topic.id);
+                              }}
+                            >
+                              <DeleteForever style={{ color: "red" }} />
+                            </IconButton>
+                          </div>
+                        );
+                      })}
+                    </List>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })}
+          </List>
+        </Drawer>
+      )}
+      {showDrawer ? (
+        <Close
+          className={classes.hamburgerIcon}
+          onClick={() => {
+            setShowDrawer(!showDrawer);
+          }}
+        />
+      ) : (
+        <Menu
+          onClick={() => {
+            setShowDrawer(!showDrawer);
+          }}
+          className={classes.hamburgerIcon}
+        />
+      )}
     </div>
   );
 }
