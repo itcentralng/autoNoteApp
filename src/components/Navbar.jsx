@@ -5,7 +5,7 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
@@ -33,6 +33,13 @@ const useStyles = makeStyles((theme) => {
   };
 });
 function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  function handleLogout() {
+    // TODO: Implement logout functionality
+    setIsLoggedIn(false);
+  }
+
   const navItems = [
     {
       title: "About",
@@ -50,11 +57,15 @@ function Navbar() {
       title: "Register",
       Link: "/register",
     },
-    {
+    isLoggedIn ? {
+      title: "Logout",
+      Link: "/logout",
+    } : {
       title: "Log in",
       Link: "/teacher",
     },
   ];
+  
   const classes = useStyles();
   return (
     <div className={classes.navbar}>
