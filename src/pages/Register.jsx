@@ -41,6 +41,8 @@ function Register() {
   const [password, setPassword] = useState("");
   const [RegisterMessage, setRegisterMessage] = useState("");
 
+  const isFormValid = email && password;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -108,6 +110,7 @@ function Register() {
               <TextField
                 variant="outlined"
                 value={password}
+                type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 label="Password"
                 InputLabelProps={{
@@ -124,6 +127,7 @@ function Register() {
                 type="submit"
                 color="secondary"
                 className={classes.btn}
+                disabled={!isFormValid}
               >
                 Register
               </Button>

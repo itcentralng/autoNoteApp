@@ -5,7 +5,7 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
@@ -43,6 +43,18 @@ const useStyles = makeStyles((theme) => {
   };
 });
 function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  function handleLogin() {
+   
+    setIsLoggedIn(true);
+  }
+
+  function handleLogout() {
+    
+    setIsLoggedIn(false);
+  }
+
   const navItems = [
     {
       title: "About",
@@ -60,11 +72,18 @@ function Navbar() {
       title: "Register",
       Link: "/register",
     },
-    {
+    isLoggedIn ? {
+      title: "Logout",
+      Link: "#",
+      onclick: handleLogout,
+    } : {
       title: "Log in",
       Link: "/teacher",
+      onclick: handleLogin,
     },
   ];
+  
+  
   const classes = useStyles();
   return (
     <div className={classes.navbar}>

@@ -46,10 +46,12 @@ function Login() {
   const [loader, setLoader] = useState(false);
 
   const [wrongCredential, setWrongCredentials] = useState(false);
+  
 
   // console.log(location.pathname);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const isFormValid = email && password;
   function handleLogin() {
     setLoader(true);
     fetch(`${process.env.REACT_APP_API_URL}/login`, {
@@ -109,7 +111,7 @@ function Login() {
                 <FormGroup style={{ alignItems: "center" }}>
                   <TextField
                     variant="outlined"
-                    label="Username"
+                    label="Email"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
@@ -126,6 +128,7 @@ function Login() {
 
                   <TextField
                     variant="outlined"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     label="Password"
@@ -148,6 +151,7 @@ function Login() {
                     color="secondary"
                     className={classes.btn}
                     onClick={handleLogin}
+                    disabled={!isFormValid}
                   >
                     {loader ? (
                       <ScaleLoader color="#ffffff" height={15} />

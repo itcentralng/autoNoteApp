@@ -67,19 +67,26 @@ function Recording() {
   const [generatedNote, setGeneratedNote] = useState({});
   const user = JSON.parse(localStorage.getItem("user"));
   const [messages, setMessages] = useState([]);
+  const isFormValid = subject && topic && curriculum && level;
 
   const formObj = [
     {
-      label: "Subject",
+      label: "Subject", 
+      value:{subject},
     },
     {
       label: "Topic",
+      value:{topic},
+
     },
     {
       label: "Curriculum",
+      value:{curriculum},
     },
     {
       label: "Level",
+      value: {level},
+
     },
   ];
 
@@ -314,6 +321,7 @@ function Recording() {
             variant="contained"
             className={classes.btn}
             color="secondary"
+            disabled={!isFormValid}
             startIcon={<EditRounded />}
             onClick={
               location.pathname === "/write"
