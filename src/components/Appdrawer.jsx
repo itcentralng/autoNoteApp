@@ -174,7 +174,7 @@ function Appdrawer() {
             }}
           >
             <Typography variant="h4" className={classes.title}>
-              KlassNaut
+              CourseGuide
             </Typography>
             <Link to="/create">
               <Button
