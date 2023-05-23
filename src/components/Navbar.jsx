@@ -46,12 +46,10 @@ function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   function handleLogin() {
-   
     setIsLoggedIn(true);
   }
 
   function handleLogout() {
-    
     setIsLoggedIn(false);
   }
 
@@ -72,25 +70,26 @@ function Navbar() {
       title: "Register",
       Link: "/register",
     },
-    isLoggedIn ? {
-      title: "Logout",
-      Link: "#",
-      onclick: handleLogout,
-    } : {
-      title: "Log in",
-      Link: "/teacher",
-      onclick: handleLogin,
-    },
+    isLoggedIn
+      ? {
+          title: "Logout",
+          Link: "#",
+          onclick: handleLogout,
+        }
+      : {
+          title: "Log in",
+          Link: "/teacher",
+          onclick: handleLogin,
+        },
   ];
-  
-  
+
   const classes = useStyles();
   return (
     <div className={classes.navbar}>
       <Container className={classes.navbarContainer}>
         <div className={classes.logo}>
           <Link to="/">
-            <Typography variant="h4">KlassNaut</Typography>
+            <Typography variant="h4">CourseGuide</Typography>
           </Link>
         </div>
         <List className={classes.navItems}>

@@ -71,22 +71,20 @@ function Recording() {
 
   const formObj = [
     {
-      label: "Subject", 
-      value:{subject},
+      label: "Subject",
+      value: { subject },
     },
     {
       label: "Topic",
-      value:{topic},
-
+      value: { topic },
     },
     {
       label: "Curriculum",
-      value:{curriculum},
+      value: { curriculum },
     },
     {
       label: "Level",
-      value: {level},
-
+      value: { level },
     },
   ];
 
@@ -197,12 +195,11 @@ function Recording() {
     setRecord(false);
   };
   const onStop = (recordedBlob) => {
-    const recordedFile = new File([recordedBlob.blob], "recorded_audio.wav", {
+    const blob = new Blob([recordedBlob.blob], {
       type: recordedBlob.blob.type,
-      lastModified: Date.now(),
     });
-    setRecordedAudio(recordedFile);
-    console.log(recordedFile);
+    setRecordedAudio(blob);
+    console.log(blob);
   };
 
   return (
